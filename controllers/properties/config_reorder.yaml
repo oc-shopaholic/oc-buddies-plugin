@@ -1,0 +1,5 @@
+title: 'lovata.buddies::lang.property.reorder_title'
+modelClass: Lovata\Buddies\Models\Property
+nameFrom: title
+toolbar:
+    buttons: reorder_toolbar

@@ -1,0 +1,16 @@
+name: 'lovata.buddies::lang.property.name'
+modelClass: Lovata\Buddies\Models\Property
+form: $/lovata/buddies/models/property/fields.yaml
+defaultRedirect: lovata/buddies/properties
+create:
+    title: 'lovata.buddies::lang.property.create_title'
+    redirect: 'lovata/buddies/properties/update/:id'
+    redirectClose: lovata/buddies/properties
+    flashSave: 'lovata.buddies::lang.property.message_create'
+update:
+    title: 'lovata.buddies::lang.property.update_title'
+    redirect: lovata/buddies/properties
+    redirectClose: lovata/buddies/properties
+    flashSave: 'lovata.buddies::lang.property.message_update'
+    flashDelete: 'lovata.buddies::lang.property.message_delete'
+preview: {  }

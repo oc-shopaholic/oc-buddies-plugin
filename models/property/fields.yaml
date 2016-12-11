@@ -1,0 +1,64 @@
+fields:
+    active:
+        label: 'lovata.buddies::lang.field.active'
+        span: left
+        default: 1
+        type: switch
+    title:
+        label: 'lovata.buddies::lang.field.title'
+        oc.commentPosition: ''
+        span: left
+        required: 1
+        type: text
+    type:
+        label: 'lovata.buddies::lang.field.type'
+        span: right
+        oc.commentPosition: ''
+        type: dropdown
+    'settings[list]':
+        label: 'lovata.buddies::lang.field.property_list_value'
+        oc.commentPosition: ''
+        prompt: 'lovata.buddies::lang.button.add_property_value'
+        span: right
+        type: repeater
+        trigger:
+            action: show
+            field: type
+            condition: 'value[select] || value[checkbox]'
+        form:
+            fields:
+                value:
+                    label: 'lovata.buddies::lang.field.value'
+                    oc.commentPosition: ''
+                    span: full
+                    type: text
+    'settings[datepicker]':
+        label: 'lovata.buddies::lang.field.mode'
+        span: right
+        oc.commentPosition: ''
+        options:
+            date: 'lovata.buddies::lang.field.date'
+            datetime: 'lovata.buddies::lang.field.datetime'
+            time: 'lovata.buddies::lang.field.time'
+        trigger:
+            action: show
+            field: type
+            condition: 'value[date]'
+        type: dropdown
+    'settings[mediafinder]':
+        label: 'lovata.buddies::lang.field.mode'
+        span: right
+        oc.commentPosition: ''
+        options:
+            file: 'lovata.buddies::lang.field.file'
+            image: 'lovata.buddies::lang.field.image'
+        trigger:
+            action: show
+            field: type
+            condition: 'value[mediafinder]'
+        type: dropdown
+    code:
+        label: 'lovata.buddies::lang.field.code'
+        span: left
+        oc.commentPosition: ''
+        type: text

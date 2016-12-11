@@ -1,0 +1,16 @@
+title: 'lovata.buddies::lang.property.list_title'
+modelClass: Lovata\Buddies\Models\Property
+list: $/lovata/buddies/models/property/columns.yaml
+recordUrl: 'lovata/buddies/properties/update/:id'
+noRecordsMessage: 'backend::lang.list.no_records'
+recordsPerPage: '25'
+showSetup: true
+showCheckboxes: true
+showSorting: 1
+defaultSort:
+    column: sort_order
+    direction: asc
+toolbar:
+    buttons: list_toolbar
+    search:
+        prompt: 'backend::lang.list.search_prompt'

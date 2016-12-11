@@ -1,0 +1,14 @@
+1.0.1:
+    - 'Initialize plugin.'
+1.0.2:
+    - 'Created table lovata_buddies_users'
+    - builder_table_create_lovata_buddies_users.php
+1.0.3:
+    - 'Created table lovata_buddies_addition_properties'
+    - builder_table_create_lovata_buddies_addition_properties.php
+1.0.4:
+    - 'Created table lovata_buddies_groups'
+    - builder_table_create_lovata_buddies_groups.php
+1.0.5:
+    - 'Created table lovata_buddies_throttle'
+    - builder_table_create_lovata_buddies_throttle.php

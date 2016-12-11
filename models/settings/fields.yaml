@@ -1,0 +1,22 @@
+tabs:
+    fields:
+        password_limit_min:
+            tab: lovata.buddies::lang.tab.validation
+            span: left
+            label: lovata.buddies::lang.field.password_limit_min
+            type: number
+        password_regexp:
+            tab: lovata.buddies::lang.tab.validation
+            span: left
+            label: lovata.buddies::lang.field.password_regexp
+            type: text
+        queue_on:
+            tab: lovata.buddies::lang.tab.mail
+            span: left
+            label: lovata.buddies::lang.field.queue_on
+            type: checkbox
+        queue_name:
+            tab: lovata.buddies::lang.tab.mail
+            span: left
+            label: lovata.buddies::lang.field.queue_name
+            type: text

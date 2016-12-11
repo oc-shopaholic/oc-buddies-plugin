@@ -1,0 +1,34 @@
+columns:
+    email:
+        label: 'lovata.buddies::lang.field.email'
+        type: text
+        searchable: true
+        sortable: true
+    is_activated:
+        label: 'lovata.buddies::lang.field.active'
+        type: switch
+    name:
+        label: 'lovata.buddies::lang.field.name'
+        type: text
+        searchable: true
+        sortable: true
+    last_name:
+        label: 'lovata.buddies::lang.field.last_name'
+        type: text
+        searchable: true
+        sortable: true
+    id:
+        label: 'lovata.buddies::lang.field.id'
+        type: number
+        sortable: true
+        width: 100px
+    created_at:
+        label: 'lovata.buddies::lang.field.created_at'
+        type: datetime
+        invisible: true
+        sortable: true
+    updated_at:
+        label: 'lovata.buddies::lang.field.updated_at'
+        type: datetime
+        invisible: true
+        sortable: true

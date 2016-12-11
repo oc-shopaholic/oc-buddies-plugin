@@ -1,0 +1,20 @@
+plugin:
+    name: 'lovata.buddies::lang.plugin.name'
+    description: 'lovata.buddies::lang.plugin.description'
+    author: Lovata
+    icon: oc-icon-users
+    homepage: ''
+navigation:
+    main-menu-buddies:
+        label: 'lovata.buddies::lang.menu.main'
+        url: lovata/buddies/users
+        icon: icon-users
+        sideMenu:
+            side-menu-buddies-user:
+                label: 'lovata.buddies::lang.menu.user'
+                url: lovata/buddies/users
+                icon: icon-users
+            side-menu-buddies-property:
+                label: 'lovata.buddies::lang.menu.property'
+                url: lovata/buddies/properties
+                icon: icon-sitemap
