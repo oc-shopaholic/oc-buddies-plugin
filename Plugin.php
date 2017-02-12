@@ -18,23 +18,28 @@ class Plugin extends PluginBase
 {
     const NAME = 'buddies';
     const CACHE_TAG = 'buddies';
-    
+
+    /**
+     * @return array
+     */
     public function registerComponents()
     {
         return [
-            '\Lovata\Buddies\Components\Buddies' => 'Buddies',
             '\Lovata\Buddies\Components\Registration' => 'Registration',
-            '\Lovata\Buddies\Components\RegistrationPage' => 'RegistrationPage',
-            '\Lovata\Buddies\Components\LoginPage' => 'LoginPage',
-            '\Lovata\Buddies\Components\RestorePasswordPage' => 'RestorePasswordPage',
+            '\Lovata\Buddies\Components\Login' => 'Login',
             '\Lovata\Buddies\Components\Logout' => 'Logout',
-            '\Lovata\Buddies\Components\ResetPasswordPage' => 'ResetPasswordPage',
+            '\Lovata\Buddies\Components\ChangePassword' => 'ChangePassword',
+            '\Lovata\Buddies\Components\RestorePassword' => 'RestorePassword',
+            '\Lovata\Buddies\Components\ResetPassword' => 'ResetPassword',
             '\Lovata\Buddies\Components\ActivationPage' => 'ActivationPage',
             '\Lovata\Buddies\Components\UserPage' => 'UserPage',
-            '\Lovata\Buddies\Components\ChangePasswordPage' => 'ChangePasswordPage',
+            '\Lovata\Buddies\Components\UserData' => 'UserData',
         ];
     }
 
+    /**
+     * @return array
+     */
     public function registerSettings()
     {
         return [
@@ -59,6 +64,9 @@ class Plugin extends PluginBase
 
     }
 
+    /**
+     * @return array
+     */
     public function registerMailTemplates()
     {
         return [
@@ -75,8 +83,8 @@ class Plugin extends PluginBase
     /**
      * Extend "User" model
      */
-    protected function extendUserFields() {
-
+    protected function extendUserFields()
+    {
         Users::extendFormFields(function($form, $model, $context) {
 
             /** @var \Backend\Widgets\Form $form */

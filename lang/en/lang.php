@@ -12,6 +12,7 @@
         'password_change'               => 'Изменить пароль',
         'mode'                          => 'Вид свойства',
         'addition_properties'           => 'Свойства',
+        'reset_password_code'           => 'Ключ',
         'password_limit_min'            => 'Минимальная длинна пароля',
         'password_regexp'               => 'Регулярное выражение для проверки пароля',
         'queue_on'                      => 'Отправка писем используя Queue',
@@ -73,6 +74,7 @@
         'restore_password'         => 'Восстановление пароля',
         'restore_password_desc'    => '',
 
+        'property_code'                         => 'Code',
         'property_redirect_page'                => 'Redirect page',
         'property_redirect_on'                  => 'Redirect ON',
         'property_flash_on'                     => 'Flash ON',

@@ -15,7 +15,6 @@ use System\Classes\PluginManager;
  * Class UserPage
  * @package Lovata\Buddies\Components
  * @author Andrey Kahranenka, a.khoronenko@lovata.com, LOVATA Group
- * @author Denis Plisko, d.plisko@lovata.com, LOVATA Group
  *
  * @mixin Builder
  * @mixin \Eloquent

@@ -45,7 +45,6 @@ use System\Classes\PluginManager;
  * @method static $this notActive()
  * @method static $this getByActivationCode(string $sActivationCode)
  * @method static $this getByEmail(string $sEmail)
- * @method static $this whereEmail($value)
  */
 class User extends UserModel
 {
@@ -69,6 +68,10 @@ class User extends UserModel
         'groups' => ['Lovata\Buddies\Models\Group', 'table' => 'lovata_buddies_users_groups', 'key' => 'user_id']
     ];
 
+    /**
+     * User constructor.
+     * @param array $attributes
+     */
     public function __construct(array $attributes = [])
     {
         $this->rules = self::getValidationRules();
@@ -109,8 +112,11 @@ class User extends UserModel
         return $arResult;
     }
 
-    public function setPasswordAttribute($sValue) {
-
+    /**
+     * @param $sValue
+     */
+    public function setPasswordAttribute($sValue)
+    {
         if(!isset($this->attributes['password']) || empty($this->attributes['password']) || (!empty($sValue) && $this->password_change)) {
             $this->attributes['password'] = $sValue;
         }
@@ -127,18 +133,26 @@ class User extends UserModel
     }
 
     /**
+     * Clear cache data
+     */
+    public function clearCache()
+    {
+        CCache::clear([Plugin::CACHE_TAG, self::CACHE_TAG_ELEMENT], $this->id);
+    }
+
+    /**
      * Get element data
      * @return array
      */
     public function getData()
     {
         $arResult = [
-            'id' => $this->id,
-            'email' => $this->email,
-            'name' => $this->name,
-            'last_name' => $this->last_name,
-            'avatar' => $this->getFileData('avatar'),
-            'property' => $this->getPropertyValue(),
+            'id'            => $this->id,
+            'email'         => $this->email,
+            'name'          => $this->name,
+            'last_name'     => $this->last_name,
+            'avatar'        => $this->getFileData('avatar'),
+            'property'      => $this->getPropertyValue(),
         ];
 
         //Custom extending
@@ -192,19 +206,11 @@ class User extends UserModel
     }
 
     /**
-     * Clear cache data
-     */
-    public function clearCache()
-    {
-        CCache::clear([Plugin::CACHE_TAG, self::CACHE_TAG_ELEMENT], $this->id);
-    }
-
-    /**
      * Get property values
      * @return array
      */
-    protected function getPropertyValue() {
-
+    protected function getPropertyValue()
+    {
         $arPropertyList = Property::getPropertyList();
         if(empty($arPropertyList)) {
             return [];
@@ -235,7 +241,8 @@ class User extends UserModel
      * Get restore code
      * @return string
      */
-    public function getRestoreCode() {
+    public function getRestoreCode()
+    {
         return implode('!', [$this->id, $this->getResetPasswordCode()]);
     }
 
@@ -243,7 +250,8 @@ class User extends UserModel
      * Get restore code value
      * @return string
      */
-    public function getRestoreCodeValue() {
+    public function getRestoreCodeValue()
+    {
         return implode('!', [$this->id, $this->reset_password_code]);
     }
 
@@ -252,7 +260,8 @@ class User extends UserModel
      * @param Builder $obQuery
      * @return Builder;
      */
-    public function scopeActive($obQuery) {
+    public function scopeActive($obQuery)
+    {
         return $obQuery->where('is_activated', true);
     }
 
@@ -271,8 +280,8 @@ class User extends UserModel
      * @param string $sData
      * @return Builder;
      */
-    public function scopeGetByActivationCode($obQuery, $sData) {
-        
+    public function scopeGetByActivationCode($obQuery, $sData)
+    {
         if(!empty($sData)) {
             $obQuery->where('activation_code', $sData);
         }
@@ -286,8 +295,8 @@ class User extends UserModel
      * @param string $sData
      * @return Builder;
      */
-    public function scopeGetByEmail($obQuery, $sData) {
-        
+    public function scopeGetByEmail($obQuery, $sData)
+    {
         if(!empty($sData)) {
             $obQuery->where('email', $sData);
         }
