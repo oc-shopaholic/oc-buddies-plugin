@@ -7,7 +7,6 @@ use Lang;
 use Lovata\Buddies\Models\User;
 use Validator;
 use Input;
-use Redirect;
 
 /**
  * Class RestorePassword
@@ -92,7 +91,7 @@ class RestorePassword extends Buddies
     {
         if(empty($arUserData)) {
             $arErrorData = [
-                'message'   => Lang::get('lovata.buddies::lang.message.e_not_correct_request'),
+                'message'   => Lang::get('lovata.toolbox::lang.message.e_not_correct_request'),
                 'field'     => null,
             ];
 

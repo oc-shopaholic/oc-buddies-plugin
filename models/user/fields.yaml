@@ -2,7 +2,7 @@ fields: {  }
 tabs:
     fields:
         is_activated:
-            label: 'lovata.buddies::lang.field.active'
+            label: 'lovata.toolbox::lang.field.active'
             span: auto
             type: switch
             tab: 'lovata.buddies::lang.tab.data'
@@ -15,13 +15,25 @@ tabs:
         last_name:
             label: 'lovata.buddies::lang.field.last_name'
             oc.commentPosition: ''
-            span: auto
+            span: left
+            type: text
+            tab: 'lovata.buddies::lang.tab.data'
+        middle_name:
+            label: 'lovata.buddies::lang.field.middle_name'
+            oc.commentPosition: ''
+            span: left
             type: text
             tab: 'lovata.buddies::lang.tab.data'
         email:
-            label: 'lovata.buddies::lang.field.email'
+            label: 'lovata.toolbox::lang.field.email'
             oc.commentPosition: ''
-            span: auto
+            span: left
+            type: text
+            tab: 'lovata.buddies::lang.tab.data'
+        phone:
+            label: 'lovata.toolbox::lang.field.phone'
+            oc.commentPosition: ''
+            span: left
             type: text
             tab: 'lovata.buddies::lang.tab.data'
         password_change:
@@ -56,3 +68,14 @@ tabs:
                 condition: checked
             type: password
             tab: 'lovata.buddies::lang.tab.data'
+        avatar:
+            label: 'lovata.toolbox::lang.field.image'
+            oc.commentPosition: ''
+            mode: image
+            useCaption: true
+            thumbOptions:
+                mode: crop
+                extension: auto
+            span: left
+            type: fileupload
+            tab: 'lovata.toolbox::lang.tab.images'

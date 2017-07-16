@@ -1,4 +1,4 @@
-title: 'lovata.buddies::lang.property.reorder_title'
+title: 'backend::lang.reorder.default_title'
 modelClass: Lovata\Buddies\Models\Property
 nameFrom: title
 toolbar:

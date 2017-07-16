@@ -3,12 +3,9 @@
 use Lang;
 use Kharanenka\Helper\Result;
 use Lovata\Buddies\Models\Settings;
-use Lovata\Toolbox\Classes\ComponentHelper;
-use Lovata\Toolbox\Classes\ComponentTraitNotFoundResponse;
-use Response;
+use Lovata\Toolbox\Traits\Helpers\TraitComponentNotFoundResponse;
 use Lovata\Buddies\Models\User;
 use Input;
-use Redirect;
 use Validator;
 
 /**
@@ -18,7 +15,7 @@ use Validator;
  */
 class ResetPassword extends Buddies
 {
-    use ComponentTraitNotFoundResponse;
+    use TraitComponentNotFoundResponse;
 
     protected $sMode = null;
 
@@ -48,7 +45,7 @@ class ResetPassword extends Buddies
     }
 
     /**
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|void
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|null
      */
     public function onRun()
     {

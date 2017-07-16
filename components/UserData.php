@@ -1,23 +1,9 @@
 <?php namespace Lovata\Buddies\Components;
 
-use Input;
-use Kharanenka\Helper\Result;
-use Lang;
-use Lovata\CustomBuddies\Classes\UserExtend;
-use Lovata\Toolbox\Classes\ComponentTraitNotFoundResponse;
-use Lovata\Buddies\Models\User;
-use Redirect;
-use Validator;
-use October\Rain\Database\Builder;
-use System\Classes\PluginManager;
-
 /**
  * Class UserData
  * @package Lovata\Buddies\Components
  * @author Andrey Kahranenka, a.khoronenko@lovata.com, LOVATA Group
- *
- * @mixin Builder
- * @mixin \Eloquent
  */
 class UserData extends Buddies
 {

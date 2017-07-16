@@ -6,7 +6,7 @@ use Hash;
 use Kharanenka\Helper\Result;
 use Lovata\Buddies\Models\Settings;
 use Validator;
-use Lovata\Toolbox\Classes\ComponentTraitNotFoundResponse;
+use Lovata\Toolbox\Traits\Helpers\TraitComponentNotFoundResponse;
 
 /**
  * Class ChangePassword
@@ -15,7 +15,7 @@ use Lovata\Toolbox\Classes\ComponentTraitNotFoundResponse;
  */
 class ChangePassword extends Buddies
 {
-    use ComponentTraitNotFoundResponse;
+    use TraitComponentNotFoundResponse;
 
     protected $sMode = null;
 

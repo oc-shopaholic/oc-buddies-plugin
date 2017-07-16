@@ -3,14 +3,14 @@ modelClass: Lovata\Buddies\Models\Property
 form: $/lovata/buddies/models/property/fields.yaml
 defaultRedirect: lovata/buddies/properties
 create:
-    title: 'lovata.buddies::lang.property.create_title'
+    title: 'backend::lang.form.create_title'
     redirect: 'lovata/buddies/properties/update/:id'
     redirectClose: lovata/buddies/properties
-    flashSave: 'lovata.buddies::lang.property.message_create'
+    flashSave: 'lovata.toolbox::lang.message.create_success'
 update:
-    title: 'lovata.buddies::lang.property.update_title'
+    title: 'backend::lang.form.update_title'
     redirect: lovata/buddies/properties
     redirectClose: lovata/buddies/properties
-    flashSave: 'lovata.buddies::lang.property.message_update'
-    flashDelete: 'lovata.buddies::lang.property.message_delete'
+    flashSave: 'lovata.toolbox::lang.message.update_success'
+    flashDelete: 'lovata.toolbox::lang.message.delete_success'
 preview: {  }

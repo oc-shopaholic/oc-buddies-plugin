@@ -58,7 +58,7 @@ class Logout extends Buddies
     /**
      * Init component data
      */
-    protected function initData()
+    public function init()
     {
         $this->sMode = $this->property('mode');
         if(empty($this->sMode)) {
@@ -87,7 +87,6 @@ class Logout extends Buddies
      */
     public function onAjax()
     {
-        $this->initData();
         if(!empty($this->obUser)) {
             BuddiesAuth::logout();
         }

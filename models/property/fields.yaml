@@ -1,17 +1,17 @@
 fields:
     active:
-        label: 'lovata.buddies::lang.field.active'
+        label: 'lovata.toolbox::lang.field.active'
         span: left
         default: 1
         type: switch
     title:
-        label: 'lovata.buddies::lang.field.title'
+        label: 'lovata.toolbox::lang.field.title'
         oc.commentPosition: ''
         span: left
         required: 1
         type: text
     type:
-        label: 'lovata.buddies::lang.field.type'
+        label: 'lovata.toolbox::lang.field.type'
         span: right
         oc.commentPosition: ''
         type: dropdown
@@ -58,7 +58,7 @@ fields:
             condition: 'value[mediafinder]'
         type: dropdown
     code:
-        label: 'lovata.buddies::lang.field.code'
+        label: 'lovata.toolbox::lang.field.code'
         span: left
         oc.commentPosition: ''
         type: text

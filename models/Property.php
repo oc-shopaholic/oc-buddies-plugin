@@ -156,7 +156,7 @@ class Property extends Model {
                 }
 
                 //Add empty value
-                $arValueList = ['0' => Lang::get('lovata.buddies::lang.field.empty')] + $arValueList;
+                $arValueList = ['0' => Lang::get('lovata.toolbox::lang.field.empty')] + $arValueList;
                 
                 $arResult = [
                     'type' => 'dropdown',

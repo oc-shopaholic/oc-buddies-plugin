@@ -1,11 +1,11 @@
 columns:
     email:
-        label: 'lovata.buddies::lang.field.email'
+        label: 'lovata.toolbox::lang.field.email'
         type: text
         searchable: true
         sortable: true
     is_activated:
-        label: 'lovata.buddies::lang.field.active'
+        label: 'lovata.toolbox::lang.field.active'
         type: switch
     name:
         label: 'lovata.buddies::lang.field.name'
@@ -18,17 +18,17 @@ columns:
         searchable: true
         sortable: true
     id:
-        label: 'lovata.buddies::lang.field.id'
+        label: 'lovata.toolbox::lang.field.id'
         type: number
         sortable: true
         width: 100px
     created_at:
-        label: 'lovata.buddies::lang.field.created_at'
+        label: 'lovata.toolbox::lang.field.created_at'
         type: datetime
         invisible: true
         sortable: true
     updated_at:
-        label: 'lovata.buddies::lang.field.updated_at'
+        label: 'lovata.toolbox::lang.field.updated_at'
         type: datetime
         invisible: true
         sortable: true

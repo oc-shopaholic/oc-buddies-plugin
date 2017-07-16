@@ -5,7 +5,10 @@ use Illuminate\Database\Eloquent\Collection;
 use Kharanenka\Helper\CCache;
 use Kharanenka\Helper\CustomValidationMessage;
 use Kharanenka\Helper\DataFileModel;
+use Kharanenka\Scope\NameField;
 use Lovata\Buddies\Plugin;
+use Lovata\Toolbox\Plugin as  ToolboxPlugin;
+use Lovata\Toolbox\Traits\Helpers\TraitClassExtension;
 use October\Rain\Auth\Models\User as UserModel;
 use October\Rain\Database\Builder;
 use System\Classes\PluginManager;
@@ -15,9 +18,8 @@ use System\Classes\PluginManager;
  * @package Lovata\Buddies\Models
  * @author Andrey Kahranenka, a.khoronenko@lovata.com, LOVATA Group
  * 
- * @mixin Builder
+ * @mixin \October\Rain\Database\Builder
  * @mixin \Eloquent
- * @mixin \Lovata\CustomBuddies\Classes\UserExtend
  * 
  * @property int $id
  * @property bool $is_activated
@@ -27,6 +29,10 @@ use System\Classes\PluginManager;
  * @property string $password_confirmation
  * @property string $name
  * @property string $last_name
+ * @property string $middle_name
+ * @property string $phone
+ * @property string $phone_short
+ * @property array $phone_list
  * @property string $activation_code
  * @property string $persist_code
  * @property string $reset_password_code
@@ -39,6 +45,8 @@ use System\Classes\PluginManager;
  * @property Carbon $updated_at
  * @property Carbon $deleted_at
  *
+ * @property \System\Models\File $avatar
+ *
  * @property Collection|Group[] $groups
  * 
  * @method static $this active()
@@ -49,8 +57,10 @@ use System\Classes\PluginManager;
 class User extends UserModel
 {
     use CustomValidationMessage;
+    use TraitClassExtension;
     use DataFileModel;
-    
+    use NameField;
+
     const CACHE_TAG_ELEMENT = 'buddies-user-element';
     
     public $table = 'lovata_buddies_users';
@@ -62,7 +72,7 @@ class User extends UserModel
     public $attachOne = ['avatar' => ['System\Models\File']];
     public $casts = ['property' => 'array'];
     public $purgeable = ['password_confirmation', 'password_change'];
-    public $appends = [];
+    public $appends = ['phone_list'];
 
     public $belongsToMany = [
         'groups' => ['Lovata\Buddies\Models\Group', 'table' => 'lovata_buddies_users_groups', 'key' => 'user_id']
@@ -76,13 +86,8 @@ class User extends UserModel
     {
         $this->rules = self::getValidationRules();
         
-        $this->setCustomMessage(Plugin::NAME, ['required', 'unique', 'max', 'min', 'confirmed', 'email', 'regex']);
+        $this->setCustomMessage(ToolboxPlugin::NAME, ['required', 'unique', 'max.string', 'min.string', 'confirmed', 'email', 'regex']);
         $this->setCustomAttributeName(Plugin::NAME, ['email', 'password']);
-
-        //Custom extending
-        if(PluginManager::instance()->hasPlugin('Lovata.CustomBuddies')) {
-            \Lovata\CustomBuddies\Classes\UserExtend::extendConstructor($this);
-        }
         
         parent::__construct($attributes);
     }
@@ -94,8 +99,8 @@ class User extends UserModel
     public static function getValidationRules() {
         
         $arResult = [
-            'email' => 'required|email|unique:lovata_buddies_users|max:255',
-            'password' => 'required:create|max:255|confirmed',
+            'email'                 => 'required|email|unique:lovata_buddies_users|max:255',
+            'password'              => 'required:create|max:255|confirmed',
             'password_confirmation' => 'required_with:password|max:255',
         ];
 
@@ -113,7 +118,8 @@ class User extends UserModel
     }
 
     /**
-     * @param $sValue
+     * Set password attribute method
+     * @param string $sValue
      */
     public function setPasswordAttribute($sValue)
     {
@@ -122,11 +128,27 @@ class User extends UserModel
         }
     }
 
+    /**
+     * Before delete model method
+     */
+    public function beforeDelete()
+    {
+        $sTime = str_replace('.', '', microtime(true));
+        $this->email = 'removed'.$sTime.'@removed.del';
+        $this->save();
+    }
+
+    /**
+     * After save method
+     */
     public function afterSave()
     {
         $this->clearCache();
     }
 
+    /**
+     * After delete method
+     */
     public function afterDelete()
     {
         $this->clearCache();
@@ -151,21 +173,20 @@ class User extends UserModel
             'email'         => $this->email,
             'name'          => $this->name,
             'last_name'     => $this->last_name,
+            'middle_name'   => $this->middle_name,
+            'phone'         => $this->phone,
+            'phone_list'    => $this->phone_list,
             'avatar'        => $this->getFileData('avatar'),
             'property'      => $this->getPropertyValue(),
         ];
 
-        //Custom extending
-        if(PluginManager::instance()->hasPlugin('Lovata.CustomBuddies')) {
-            \Lovata\CustomBuddies\Classes\UserExtend::extendGetData($arResult, $this);
-        }
-
+        self::extendMethodResult(__FUNCTION__, $arResult, [$this]);
         return $arResult;
     }
 
     /**
      * Get cached data
-     * @param $iElementID
+     * @param int $iElementID
      * @param null|User $obElement
      * @return array|null
      */
@@ -197,11 +218,7 @@ class User extends UserModel
             CCache::forever($arCacheTags, $sCacheKey, $arResult);
         }
 
-        //Custom extending
-        if(PluginManager::instance()->hasPlugin('Lovata.CustomBuddies')) {
-            \Lovata\CustomBuddies\Classes\UserExtend::extendGetCacheData($arResult, $iElementID, $obElement);
-        }
-
+        self::extendMethodResult(__FUNCTION__, $arResult);
         return $arResult;
     }
 
@@ -257,8 +274,8 @@ class User extends UserModel
 
     /**
      * Get active elements
-     * @param Builder $obQuery
-     * @return Builder;
+     * @param User $obQuery
+     * @return User;
      */
     public function scopeActive($obQuery)
     {
@@ -267,8 +284,8 @@ class User extends UserModel
 
     /**
      * Get not active elements
-     * @param Builder $obQuery
-     * @return Builder;
+     * @param User $obQuery
+     * @return User;
      */
     public function scopeNotActive($obQuery) {
         return $obQuery->where('is_activated', false);
@@ -276,9 +293,9 @@ class User extends UserModel
     
     /**
      * Get elements by activation code
-     * @param Builder $obQuery
+     * @param User $obQuery
      * @param string $sData
-     * @return Builder;
+     * @return User;
      */
     public function scopeGetByActivationCode($obQuery, $sData)
     {
@@ -291,9 +308,9 @@ class User extends UserModel
     
     /**
      * Get elements by email
-     * @param Builder $obQuery
+     * @param User $obQuery
      * @param string $sData
-     * @return Builder;
+     * @return User;
      */
     public function scopeGetByEmail($obQuery, $sData)
     {
@@ -315,5 +332,70 @@ class User extends UserModel
         }
 
         return $this->persist_code;
+    }
+
+    /**
+     * Get phone list from "phone" field (',' is delimiter)
+     * @return array
+     */
+    public function getPhoneListAttribute()
+    {
+        $sPhone = $this->phone;
+        if(empty($sPhone)) {
+            return null;
+        }
+
+        $arResult = [];
+
+        //Explode 'phone' field
+        $arPhoneList = explode(',', $sPhone);
+        foreach($arPhoneList as $sPhoneNumber) {
+
+            //Trim phone
+            $sPhoneNumber = trim($sPhoneNumber);
+            if(empty($sPhoneNumber)) {
+                continue;
+            }
+
+            //Add phone to result
+            $arResult[] = $sPhoneNumber;
+        }
+
+        return $arResult;
+    }
+
+    /**
+     * Set phone list array to "phone" field (',' is delimiter)
+     * @param array $arValue
+     */
+    public function setPhoneListAttribute($arValue)
+    {
+        if(empty($arValue) || !is_array($arValue)) {
+            return;
+        }
+
+        //Prepare phone list
+        $arPhoneList = [];
+        foreach($arValue as $sValue) {
+            $sValue = trim($sValue);
+            if(empty($sValue)) {
+                continue;
+            }
+
+            $arPhoneList[] = $sValue;
+        }
+
+        //Save phone list to "phone" field
+        $this->phone = implode(',', $arPhoneList);
+    }
+
+    /**
+     * Set "phone" field + "phone_short"
+     * @param string $sValue
+     */
+    public function setPhoneAttribute($sValue)
+    {
+        $this->attributes['phone'] = $sValue;
+        $this->phone_short = preg_replace("%[^\d,+]%", '', $sValue);
     }
 }

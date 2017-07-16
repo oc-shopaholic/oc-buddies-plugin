@@ -1,6 +1,6 @@
 <?php namespace Lovata\Buddies\Components;
 
-use Lovata\Toolbox\Classes\ComponentTraitNotFoundResponse;
+use Lovata\Toolbox\Traits\Helpers\TraitComponentNotFoundResponse;
 use Lovata\Buddies\Models\User;
 use Cms\Classes\ComponentBase;
 
@@ -11,7 +11,7 @@ use Cms\Classes\ComponentBase;
  */
 class ActivationPage extends ComponentBase
 {
-    use ComponentTraitNotFoundResponse;
+    use TraitComponentNotFoundResponse;
 
     /**
      * @return array

@@ -91,7 +91,7 @@ class Plugin extends PluginBase
             /** @var User $model */
 
             // Only for the Product model
-            if (!$model instanceof User) {
+            if (!$model instanceof User || empty($context)) {
                 return;
             }
 
