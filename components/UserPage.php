@@ -1,14 +1,11 @@
 <?php namespace Lovata\Buddies\Components;
 
-use Input;
-use Validator;
-use Kharanenka\Helper\Result;
 use Lang;
-use Lovata\Toolbox\Traits\Helpers\TraitComponentNotFoundResponse;
+use Input;
+use Kharanenka\Helper\Result;
 use Lovata\Buddies\Models\User;
-use Redirect;
 use October\Rain\Database\Builder;
-use System\Classes\PluginManager;
+use Lovata\Toolbox\Traits\Helpers\TraitComponentNotFoundResponse;
 
 /**
  * Class UserPage
@@ -20,11 +17,8 @@ use System\Classes\PluginManager;
  */
 class UserPage extends Buddies
 {
-
     use TraitComponentNotFoundResponse;
-
-    protected $sMode = null;
-
+    
     /** @var null|User */
     protected $obElement = null;
 
@@ -34,7 +28,7 @@ class UserPage extends Buddies
     public function componentDetails()
     {
         return [
-            'name' => 'lovata.buddies::lang.component.user_page',
+            'name'        => 'lovata.buddies::lang.component.user_page',
             'description' => 'lovata.buddies::lang.component.user_page_desc'
         ];
     }
@@ -51,17 +45,6 @@ class UserPage extends Buddies
     }
 
     /**
-     * Init component data
-     */
-    public function init()
-    {
-        $this->sMode = $this->property('mode');
-        if(empty($this->sMode)) {
-            $this->sMode = self::MODE_AJAX;
-        }
-    }
-
-    /**
      * Get element object
      * @return \Illuminate\Http\Response|null
      */
@@ -74,7 +57,7 @@ class UserPage extends Buddies
         }
 
         // Resolve show data or update
-        $arUserData = Input::get('user');
+        $arUserData = Input::all();
         if (empty($arUserData)) {
             return null;
         }
@@ -90,7 +73,7 @@ class UserPage extends Buddies
     public function onAjax()
     {
         //Get user data
-        $arUserData = Input::get('user');
+        $arUserData = Input::all();
         $this->updateUserData($arUserData);
 
         return $this->getResponseModeAjax();
@@ -100,42 +83,30 @@ class UserPage extends Buddies
      * Update user data
      * @param array $arUserData
      *
-     * @return void
+     * @return bool
      */
-    protected function updateUserData($arUserData)
+    public function updateUserData($arUserData)
     {
         if(empty($arUserData) || empty($this->obUser)) {
-            $arErrorData = [
-                'message'   => Lang::get('lovata.toolbox::lang.message.e_not_correct_request'),
-                'field'     => null,
-            ];
 
-            Result::setFalse($arErrorData);
-            return;
+            $sMessage = Lang::get('lovata.toolbox::lang.message.e_not_correct_request');
+            Result::setMessage($sMessage);
+            return false;
         }
 
-        $arMessages = $this->getDefaultValidationMessage();
-        $arMessages['email.unique'] = Lang::get('lovata.buddies::lang.message.e_email_unique');
+        try {
+            $this->obUser->password = null;
+            $this->obUser->fill($arUserData);
+            $this->obUser->save();
+        } catch (\October\Rain\Database\ModelException $obException) {
 
-        //Default validation
-        $obValidator = Validator::make($arUserData, User::getValidationRules(), $arMessages);
-
-        if($obValidator->fails()) {
-            $arErrorData = $this->getValidationError($obValidator);
-            Result::setFalse($arErrorData);
-            return;
+            $this->processValidationError($obException);
+            return false;
         }
-        // Get no-update fields values from DB
-        $arUserData = UserExtend::filerUpdateData($this->obUser, $arUserData);
 
-        $this->obUser->update($arUserData);
-        $this->obUser->save();
+        $sMessage = Lang::get('lovata.buddies::lang.message.user_update_success');
+        Result::setMessage($sMessage)->setTrue($this->obUser->id);
 
-        $arResult = [
-            'message'   => Lang::get('lovata.buddies::lang.message.user_update_success'),
-            'user'     => $this->obUser->getData(),
-        ];
-
-        Result::setTrue($arResult);
+        return true;
     }
 }

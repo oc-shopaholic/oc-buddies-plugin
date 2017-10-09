@@ -1,12 +1,11 @@
 <?php namespace Lovata\Buddies\Components;
 
 use Lang;
-use Kharanenka\Helper\Result;
-use Lovata\Buddies\Models\Settings;
-use Lovata\Toolbox\Traits\Helpers\TraitComponentNotFoundResponse;
-use Lovata\Buddies\Models\User;
 use Input;
-use Validator;
+use Kharanenka\Helper\Result;
+use October\Rain\Support\Collection;
+use Lovata\Buddies\Models\User;
+use Lovata\Toolbox\Traits\Helpers\TraitComponentNotFoundResponse;
 
 /**
  * Class ResetPassword
@@ -17,9 +16,7 @@ class ResetPassword extends Buddies
 {
     use TraitComponentNotFoundResponse;
 
-    protected $sMode = null;
-
-    /** @var User */
+    /** @var  User */
     protected $obElement;
 
     /**
@@ -49,8 +46,6 @@ class ResetPassword extends Buddies
      */
     public function onRun()
     {
-        $this->initData();
-
         //Check user reset password code from URL
         if(!$this->checkResetCode()) {
             return $this->getErrorResponse();
@@ -62,7 +57,7 @@ class ResetPassword extends Buddies
         }
 
         //Get user data
-        $arUserData = Input::get('user');
+        $arUserData = Input::all();
         if(empty($arUserData)) {
             return null;
         }
@@ -72,36 +67,21 @@ class ResetPassword extends Buddies
     }
 
     /**
-     * Init component data
-     */
-    protected function initData()
-    {
-        $this->sMode = $this->property('mode');
-        if(empty($this->sMode)) {
-            $this->sMode = self::MODE_AJAX;
-        }
-    }
-
-    /**
      * Ajax handler - change password
      * @return \Illuminate\Http\RedirectResponse|array
      */
     public function onChangePassword()
     {
-        $this->initData();
         //Check user reset password code from URL
         if(!$this->checkResetCode()) {
-            $arErrorData = [
-                'message'   => Lang::get('lovata.toolbox::lang.message.e_not_correct_request'),
-                'field'     => 'password',
-            ];
 
-            Result::setFalse($arErrorData);
+            $sMessage = Lang::get('lovata.toolbox::lang.message.e_not_correct_request');
+            Result::setMessage($sMessage);
             return $this->getResponseModeAjax();
         }
 
         //Get user data
-        $arUserData = Input::get('user');
+        $arUserData = Input::all();
         $this->resetPassword($arUserData);
 
         return $this->getResponseModeAjax();
@@ -110,63 +90,62 @@ class ResetPassword extends Buddies
     /**
      * Reset user password
      * @param $arUserData
+     *
+     * @return bool
      */
-    protected function resetPassword($arUserData)
+    public function resetPassword($arUserData)
     {
-        if(empty($arUserData) || empty($this->obElement)) {
-            $arErrorData = [
-                'message'   => Lang::get('lovata.toolbox::lang.message.e_not_correct_request'),
-                'field'     => 'password',
-            ];
+        if(empty($arUserData) || !is_array($arUserData) || empty($this->obElement)) {
 
-            Result::setFalse($arErrorData);
-            return;
+            $sMessage = Lang::get('lovata.toolbox::lang.message.e_not_correct_request');
+            Result::setMessage($sMessage);
+            return false;
         }
 
-        //Set validation data
-        $arMessages = $this->getDefaultValidationMessage();
-        $arRules = [
-            'password' => 'required:create|max:255|confirmed',
-            'password_confirmation' => 'required_with:password|max:255',
-        ];
+        //Check user auth
+        if(!empty($this->obUser)) {
 
-        $iPasswordLengthMin = Settings::getValue('password_limit_min');
-        if($iPasswordLengthMin > 0) {
-            $arRules['password'] = $arRules['password'].'|min:'.$iPasswordLengthMin;
+            $sMessage = Lang::get('lovata.buddies::lang.message.e_auth_fail');
+            Result::setMessage($sMessage);
+            return null;
         }
 
-        $sPasswordRegexp = Settings::getValue('password_regexp');
-        if(!empty($sPasswordRegexp)) {
-            $arRules['password'] = $arRules['password'].'|regex:%^'.$sPasswordRegexp.'$%';
-        }
+        //Make collection
+        $obUserData = Collection::make($arUserData);
+        if(empty($obUserData->get('password'))) {
 
-        //Check validation
-        $obValidator = Validator::make($arUserData, $arRules, $arMessages);
-        if($obValidator->fails()) {
-            $arErrorData = $this->getValidationError($obValidator);
-            Result::setFalse($arErrorData);
-            return;
+            $sMessage = Lang::get('system::validation.required',
+                ['attribute' => Lang::get('lovata.toolbox::lang.field.password')]
+            );
+
+            Result::setFalse(['field' => 'password'])->setMessage($sMessage);
+            return false;
         }
 
         //Set new password
-        $this->obElement->password_change = true;
-        $this->obElement->password = $arUserData['password'];
-        $this->obElement->password_confirmation = $arUserData['password'];
+        $this->obElement->password = $obUserData->get('password');
+        $this->obElement->password_confirmation = $obUserData->get('password_confirmation');
         $this->obElement->reset_password_code = null;
-        $this->obElement->save();
 
-        $arResult = [
-            'message'   => Lang::get('lovata.buddies::lang.message.password_change_success'),
-        ];
+        try {
+            $this->obElement->save();
+        } catch (\October\Rain\Database\ModelException $obException) {
 
-        Result::setTrue($arResult);
+            $this->processValidationError($obException);
+            return false;
+        }
+
+        $sMessage = Lang::get('lovata.buddies::lang.message.password_change_success');
+        Result::setMessage($sMessage)->setTrue();
+
+        return true;
     }
 
     /**
      * Check user reset password code from URL
      * @return bool
      */
-    protected function checkResetCode()
+    public function checkResetCode()
     {
         //Get element slug
         $sElementSlug = $this->property('slug');
@@ -183,7 +162,7 @@ class ResetPassword extends Buddies
         }
 
         //Get element by slug
-        /** @var User $obElement */
+        /** @var User $obUser */
         $obUser = User::active()->find($iUserID);
         if(empty($obUser) || $sPasswordCode != $obUser->reset_password_code) {
             return false;

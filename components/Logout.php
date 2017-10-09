@@ -1,8 +1,6 @@
 <?php namespace Lovata\Buddies\Components;
 
-use Lang;
-use Cms\Classes\Page;
-use Lovata\Buddies\Facades\BuddiesAuth;
+use Lovata\Buddies\Facades\AuthHelper;
 
 /**
  * Class Logout
@@ -11,8 +9,6 @@ use Lovata\Buddies\Facades\BuddiesAuth;
  */
 class Logout extends Buddies
 {
-    protected $sMode = null;
-
     /**
      * @return array
      */
@@ -28,42 +24,10 @@ class Logout extends Buddies
      */
     public function defineProperties()
     {
-        $arResult = [
-            'mode' => [
-                'title'             => 'lovata.buddies::lang.component.property_mode',
-                'type'              => 'dropdown',
-                'options'           => [
-                    self::MODE_SUBMIT      => Lang::get('lovata.buddies::lang.component.mode_'.self::MODE_SUBMIT),
-                    self::MODE_AJAX        => Lang::get('lovata.buddies::lang.component.mode_'.self::MODE_AJAX),
-                ],
-            ],
-            'redirect_on' => [
-                'title'             => 'lovata.buddies::lang.component.property_redirect_on',
-                'type'              => 'checkbox',
-            ],
-        ];
-
-        $arPageList = Page::getNameList();
-        if(!empty($arPageList)) {
-            $arResult['redirect_page'] = [
-                'title'             => 'lovata.buddies::lang.component.property_redirect_page',
-                'type'              => 'dropdown',
-                'options'           => $arPageList,
-            ];
-        }
+        $arResult = $this->getModeProperty();
+        unset($arResult['flash_on']);
 
         return $arResult;
-    }
-
-    /**
-     * Init component data
-     */
-    public function init()
-    {
-        $this->sMode = $this->property('mode');
-        if(empty($this->sMode)) {
-            $this->sMode = self::MODE_AJAX;
-        }
     }
 
     /**
@@ -76,7 +40,7 @@ class Logout extends Buddies
         }
 
         if(!empty($this->obUser)) {
-            BuddiesAuth::logout();
+            AuthHelper::logout();
         }
 
         return $this->getResponseModeForm();
@@ -88,7 +52,7 @@ class Logout extends Buddies
     public function onAjax()
     {
         if(!empty($this->obUser)) {
-            BuddiesAuth::logout();
+            AuthHelper::logout();
         }
 
         return $this->getResponseModeAjax();

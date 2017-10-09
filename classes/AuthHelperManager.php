@@ -1,122 +1,147 @@
 <?php namespace Lovata\Buddies\Classes;
 
-use Kharanenka\Helper\Result;
-use Session;
-use Cookie;
 use Lang;
-use Lovata\Buddies\Models\Throttle;
+use Cookie;
+use Session;
+use Kharanenka\Helper\Result;
 use Lovata\Buddies\Models\User;
+use Backend\Models\UserGroup;
+use Lovata\Buddies\Models\Throttle;
 use October\Rain\Auth\Manager as AuthManager;
 
 /**
- * Class BuddiesAuthManager
+ * Class AuthHelperManager
  * @package Lovata\Buddies\Classes
+ * @author Andrey Kharanenka, a.khoronenko@lovata.com, LOVATA Group
  */
-class BuddiesAuthManager extends AuthManager
+class AuthHelperManager extends AuthManager
 {
-    protected static $instance;
     protected $sessionKey = 'buddies_user_auth';
-    protected $userModel = 'Lovata\Buddies\Models\User';
-    protected $groupModel = 'Lovata\Buddies\Models\UserGroup';
-    protected $throttleModel = 'Lovata\Buddies\Models\Throttle';
+    protected $userModel = User::class;
+    protected $groupModel = UserGroup::class;
+    protected $throttleModel = Throttle::class;
+
+    protected $sEmail;
+    protected $sPassword;
+
+    /** @var Throttle $obThrottle */
+    protected $obThrottle;
 
     /**
-     * Attempts to authenticate the given user according to the passed credentials.
+     * Authenticate user
+     * @param array $arLoginData
+     * @param bool   $bRemember
      *
-     * @param array $arCredentials The user login details
-     * @param bool $bRemember Store a non-expire cookie for the user
-     * 
-     * @return void
+     * @return User|null
      */
-    public function authenticate(array $arCredentials, $bRemember = true)
+    public function authenticate(array $arLoginData, $bRemember = false)
     {
-        $sLoginName = $this->createUserModel()->getLoginName();
-        $sLoginCredentialKey = (isset($arCredentials[$sLoginName])) ? $sLoginName : 'email';
-
-        //Check login filed
-        if(empty($arCredentials[$sLoginCredentialKey])) {
-            
-            $arErrorData = [
-                'message' => Lang::get('lovata.toolbox::lang.validation.required', ['attribute' => Lang::get('lovata.buddies::lang.field.'.$sLoginCredentialKey)]),
-                'field' => $sLoginCredentialKey,
-            ];
-            
-            Result::setFalse($arErrorData);
-            return;
+        $this->prepareLoginData($arLoginData);
+        if(!$this->validationLoginData() || !$this->checkUserThrottle()) {
+            return null;
         }
 
-        //Check password field
-        if(empty($arCredentials['password'])) {
-            
-            $arErrorData = [
-                'message' => Lang::get('lovata.toolbox::lang.validation.required', ['attribute' => Lang::get('lovata.buddies::lang.field.password')]),
-                'field' => 'password',
-            ];
-
-            Result::setFalse($arErrorData);
-            
-            return;
-        }
-
-        /*
-         * If the fallback 'login' was provided and did not match the necessary
-         * login name, swap it over
-         */
-        if($sLoginCredentialKey !== $sLoginName) {
-            $arCredentials[$sLoginName] = $arCredentials[$sLoginCredentialKey];
-            unset($arCredentials[$sLoginCredentialKey]);
-        }
-
-        /*
-         * If throttling is enabled, check they are not locked out first and foremost.
-         */
-        if($this->useThrottle) {
-            /** @var Throttle $obThrottle */
-            $obThrottle = $this->findThrottleByLogin($arCredentials[$sLoginName], $this->ipAddress);
-            if(!empty($obThrottle)) {
-                $obThrottle->check();
-                if(!Result::flag()) {
-                    return;
-                }
-            }
-        }
+        $arCredentials = [
+            'email'    => $this->sEmail,
+            'password' => $this->sPassword,
+        ];
 
         //Get user object
         $obUser = $this->findUserByCredentials($arCredentials);
         if(empty($obUser)) {
-            if($this->useThrottle && !empty($obThrottle)) {
-                $obThrottle->addLoginAttempt();
+            if($this->useThrottle && !empty($this->obThrottle)) {
+                $this->obThrottle->addLoginAttempt();
             }
 
-            $arErrorData = [
-                'message' => Lang::get('lovata.buddies::lang.message.e_login_not_correct'),
-                'field' => $sLoginCredentialKey,
-            ];
-            
-            Result::setFalse($arErrorData);
-            return;
+            $sMessage = Lang::get('lovata.buddies::lang.message.e_login_not_correct');
+            Result::setFalse(['field' => 'email'])->setMessage($sMessage);
+            return null;
         }
 
         //Check user active flag
         if ($this->requireActivation && !$obUser->is_activated) {
 
-            $arErrorData = [
-                'message' => Lang::get('lovata.buddies::lang.message.e_user_not_active'),
-                'field' => null,
-            ];
-            
-            Result::setFalse($arErrorData);
-            return;
+            $sMessage = Lang::get('lovata.buddies::lang.message.e_user_not_active');
+            Result::setFalse()->setMessage($sMessage);
+            return null;
         }
 
-        if($this->useThrottle && !empty($obThrottle)) {
-            $obThrottle->clearLoginAttempts();
+        if($this->useThrottle && !empty($this->obThrottle)) {
+            $this->obThrottle->clearLoginAttempts();
         }
 
         $obUser->clearResetPassword();
         $this->login($obUser, $bRemember);
 
-        Result::setTrue($this->user);
+        return $this->user;
+    }
+
+    /**
+     * Prepare login fields
+     * @param array $arLoginData
+     */
+    protected function prepareLoginData($arLoginData)
+    {
+        if(empty($arLoginData) || !is_array($arLoginData)) {
+            return;
+        }
+
+        if(isset($arLoginData['email'])) {
+            $this->sEmail = $arLoginData['email'];
+        }
+
+        if(isset($arLoginData['password'])) {
+            $this->sPassword = $arLoginData['password'];
+        }
+    }
+
+    /**
+     * Validation login data
+     * @return bool
+     */
+    protected function validationLoginData()
+    {
+        //Check login filed
+        if(empty($this->sEmail)) {
+
+            $sMessage = Lang::get('system::validation.required',
+                ['attribute' => Lang::get('lovata.toolbox::lang.field.email')]
+            );
+
+            Result::setFalse(['field' => 'email'])->setMessage($sMessage);
+            return false;
+        }
+
+        //Check password field
+        if(empty($this->sPassword)) {
+
+            $sMessage = Lang::get('system::validation.required',
+                ['attribute' => Lang::get('lovata.toolbox::lang.field.password')]
+            );
+
+            Result::setFalse(['field' => 'password'])->setMessage($sMessage);
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Get user throttle object and checking it
+     */
+    protected function checkUserThrottle()
+    {
+        if(!$this->useThrottle) {
+            return true;
+        }
+
+        /** @var Throttle $obThrottle */
+        $this->obThrottle = $this->findThrottleByLogin($this->sEmail, $this->ipAddress);
+        if(empty($this->obThrottle)) {
+            return true;
+        }
+
+        return $this->obThrottle->check();
     }
 
     /**
@@ -126,7 +151,7 @@ class BuddiesAuthManager extends AuthManager
      * @param User $obUser
      * @param bool $bRemember
      */
-    public function login($obUser, $bRemember = true)
+    public function login($obUser, $bRemember = false)
     {
         $this->user = $obUser;
 
@@ -183,6 +208,7 @@ class BuddiesAuthManager extends AuthManager
      */
     public function findUserByCredentials(array $arCredentials)
     {
+        /** @var User $obModel */
         $obModel = $this->createUserModel();
         $sLoginName = $obModel->getLoginName();
 
@@ -215,18 +241,12 @@ class BuddiesAuthManager extends AuthManager
         foreach ($arHashedCredentials as $sCredential => $sValue) {
 
             if (!$obUser->checkHashValue($sCredential, $sValue)) {
-                // Incorrect password
-                if ($sCredential == 'password') {
-                    return null;
-                }
-
                return null;
             }
         }
 
         return $obUser;
     }
-
 
     /**
      * Registers a user by giving the required credentials
@@ -241,6 +261,11 @@ class BuddiesAuthManager extends AuthManager
         /** @var User $obUser */
         $obUser = $this->createUserModel();
         $obUser->fill($arCredentials);
+
+        if($bActive) {
+            $obUser->activate();
+        }
+
         $obUser->save();
 
         // Prevents revalidation of the password field

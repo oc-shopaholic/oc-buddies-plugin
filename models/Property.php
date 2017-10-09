@@ -1,7 +1,6 @@
 <?php namespace Lovata\Buddies\Models;
 
 use Carbon\Carbon;
-use Kharanenka\Helper\CustomValidationMessage;
 use Kharanenka\Scope\ActiveField;
 use Kharanenka\Helper\CCache;
 use Lovata\Buddies\Plugin;
@@ -9,6 +8,8 @@ use October\Rain\Database\Builder;
 use October\Rain\Database\Collection;
 use Model;
 use Lang;
+use October\Rain\Database\Traits\Sortable;
+use October\Rain\Database\Traits\Validation;
 
 /**
  * Class Property
@@ -31,10 +32,9 @@ use Lang;
  */
 class Property extends Model {
     
-    use \October\Rain\Database\Traits\Validation;
-    use \October\Rain\Database\Traits\Sortable;
+    use Validation;
+    use Sortable;
     use ActiveField;
-    use CustomValidationMessage;
 
     const NAME = 'property';
     const CACHE_TAG_ELEMENT = 'buddies-property-element';
@@ -70,14 +70,6 @@ class Property extends Model {
         'settings',
         'sort_order',
     ];
-
-    public function __construct(array $attributes = []) {
-
-        $this->setCustomMessage(Plugin::NAME, ['required', 'unique']);
-        $this->setCustomAttributeName(Plugin::NAME, ['title', 'code']);
-
-        parent::__construct($attributes);
-    }
 
     public function afterSave()
     {

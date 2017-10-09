@@ -1,30 +1,30 @@
 <?php namespace Lovata\Buddies\Components;
 
-use Cms\Classes\Page;
-use Kharanenka\Helper\Result;
-use Lovata\Buddies\Models\Settings;
+use Flash;
 use Lang;
-use Lovata\Buddies\Facades\BuddiesAuth;
-use Lovata\Buddies\Models\User;
 use Input;
-use Cms\Classes\CodeBase;
-use Cms\Classes\ComponentBase;
 use Session;
 use Redirect;
-use Flash;
+use Cms\Classes\Page;
+use Cms\Classes\ComponentBase;
+use Kharanenka\Helper\Result;
+use Lovata\Buddies\Models\User;
+use Lovata\Buddies\Facades\AuthHelper;
 
 /**
  * Class Buddies
  * @package Lovata\Buddies\Components
  * @author Andrey Kahranenka, a.khoronenko@lovata.com, LOVATA Group
  */
-class Buddies extends ComponentBase
+abstract class Buddies extends ComponentBase
 {
     const MODE_SUBMIT = 'submit';
     const MODE_AJAX = 'ajax';
 
     /** @var null|User */
     protected $obUser = null;
+
+    protected $sMode = null;
 
     /**
      * @return array
@@ -38,26 +38,30 @@ class Buddies extends ComponentBase
     }
 
     /**
-     * Buddies constructor.
-     * @param CodeBase|null $cmsObject
-     * @param array $properties
+     * Init plugin method
      */
-    public function __construct(CodeBase $cmsObject = null, $properties = [])
+    public function init()
     {
-        if(BuddiesAuth::check()) {
-            $this->obUser = BuddiesAuth::getUser();
-        }
+        $this->obUser = AuthHelper::getUser();
 
-        parent::__construct($cmsObject, $properties);
+        $this->sMode = $this->property('mode');
+        if(empty($this->sMode)) {
+            $this->sMode = self::MODE_AJAX;
+        }
     }
 
     /**
-     * Get old form data
-     * @return array|string
+     * Get old form data value
+     * @param string $sField
+     * @return mixed
      */
-    public function getOldFormData()
+    public function getOldValue($sField)
     {
-        return Input::old('user');
+        if(empty($sField)) {
+            return null;
+        }
+
+        return Input::old($sField);
     }
 
     /**
@@ -67,8 +71,8 @@ class Buddies extends ComponentBase
     public function getErrorMessage()
     {
         $arResult = [
-            'message'   => Session::get('message'),
-            'field'     => Session::get('field'),
+            'message' => Session::get('message'),
+            'field'   => Session::get('field'),
         ];
 
         return $arResult;
@@ -81,25 +85,30 @@ class Buddies extends ComponentBase
     protected function getModeProperty()
     {
         $arResult = [
-            'mode' => [
-                'title'             => 'lovata.buddies::lang.component.property_mode',
-                'type'              => 'dropdown',
-                'options'           => [
-                    self::MODE_SUBMIT      => Lang::get('lovata.buddies::lang.component.mode_'.self::MODE_SUBMIT),
-                    self::MODE_AJAX        => Lang::get('lovata.buddies::lang.component.mode_'.self::MODE_AJAX),
+            'mode'        => [
+                'title'   => 'lovata.buddies::lang.component.property_mode',
+                'type'    => 'dropdown',
+                'options' => [
+                    self::MODE_SUBMIT => Lang::get('lovata.buddies::lang.component.mode_' . self::MODE_SUBMIT),
+                    self::MODE_AJAX   => Lang::get('lovata.buddies::lang.component.mode_' . self::MODE_AJAX),
                 ],
             ],
-            'flash_on' => [
-                'title'             => 'lovata.buddies::lang.component.property_flash_on',
-                'type'              => 'checkbox',
+            'flash_on'    => [
+                'title' => 'lovata.buddies::lang.component.property_flash_on',
+                'type'  => 'checkbox',
             ],
             'redirect_on' => [
-                'title'             => 'lovata.buddies::lang.component.property_redirect_on',
-                'type'              => 'checkbox',
+                'title' => 'lovata.buddies::lang.component.property_redirect_on',
+                'type'  => 'checkbox',
             ],
         ];
 
-        $arPageList = Page::getNameList();
+        try {
+            $arPageList = Page::getNameList();
+        } catch (\Exception $obException) {
+            $arPageList = [];
+        }
+
         if(!empty($arPageList)) {
             $arResult['redirect_page'] = [
                 'title'             => 'lovata.buddies::lang.component.property_redirect_page',
@@ -112,22 +121,13 @@ class Buddies extends ComponentBase
     }
 
     /**
-     * Get response (mode = object)
-     * @return array
-     */
-    protected function getResultModeObject()
-    {
-        return Result::get();
-    }
-
-    /**
      * Get response (mode = form)
      * @return \Illuminate\Http\RedirectResponse|null
      */
     protected function getResponseModeForm()
     {
-        if(!Result::flag()) {
-            return Redirect::back()->withInput()->with(Result::data());
+        if(!Result::status()) {
+            return Redirect::back()->withInput()->with(Result::get());
         }
 
         $bRedirectOn = $this->property('redirect_on');
@@ -152,13 +152,13 @@ class Buddies extends ComponentBase
     {
         $bFlashOn = $this->property('flash_on');
         if($bFlashOn) {
-            $arResult = Result::data();
-            if(isset($arResult['message']) && !empty($arResult['message'])) {
-                Flash::error($arResult['message']);
+            $sMessage = Result::message();
+            if(!empty($sMessage)) {
+                Flash::error($sMessage);
             }
         }
 
-        if(!Result::flag()) {
+        if(!Result::status()) {
             return Result::get();
         }
 
@@ -177,74 +177,15 @@ class Buddies extends ComponentBase
     }
 
     /**
-     * Get validation error data
-     * @param \Illuminate\Validation\Validator $obValidator
-     * @return array
+     * Process validation error data
+     * @param \October\Rain\Database\ModelException $obException
      */
-    protected function getValidationError(&$obValidator)
+    protected function processValidationError(&$obException)
     {
-        $arResult = [
-            'message' => null,
-            'field' => null,
-        ];
+        $arFiledList = array_keys($obException->getFields());
 
-        if(empty($obValidator)) {
-            return $arResult;
-        }
-
-        $obMessages = $obValidator->messages();
-        $arFieldList = $obMessages->keys();
-
-        $arResult = [
-            'message' => $obMessages->first(),
-            'field' => array_shift($arFieldList),
-        ];
-
-        return $arResult;
-    }
-
-    /**
-     * Get default validation messages
-     * @return array
-     */
-    protected function getDefaultValidationMessage()
-    {
-        //Prepare custom validation messages
-        $arResult = [
-            'email.required'        => $this->setValidationMessage('required', 'email'),
-            'email.email'           => $this->setValidationMessage('email', 'email'),
-            'password.required'     => $this->setValidationMessage('required', 'password'),
-            'password.max'          => $this->setValidationMessage('max.string', 'password', ['max' => 255]),
-            'password.confirmed'    => $this->setValidationMessage('confirmed', 'password'),
-        ];
-
-        $iPasswordLengthMin = Settings::getValue('password_limit_min');
-        if($iPasswordLengthMin > 0) {
-            $arResult['password.min'] = $this->setValidationMessage('min.string', 'password', ['min' => $iPasswordLengthMin]);
-        }
-
-        $sPasswordRegexp = Settings::getValue('password_regexp');
-        if(!empty($sPasswordRegexp)) {
-            $arResult['password.regex'] = $this->setValidationMessage('regex', 'password');
-        }
-
-        return $arResult;
-    }
-
-    /**
-     * Set custom validation message
-     * @param string $sRule
-     * @param string $sAttribute
-     * @param array $arSettings
-     * @return string
-     */
-    protected function setValidationMessage($sRule, $sAttribute, $arSettings = [])
-    {
-        $arLangSettings = ['attribute' => Lang::get('lovata.toolbox::lang.field.'.$sAttribute)];
-        if(!empty($arSettings)) {
-            $arLangSettings = array_merge($arLangSettings, $arSettings);
-        }
-
-        return Lang::get('lovata.toolbox::lang.validation.'.$sRule, $arLangSettings);
+        Result::setFalse(['field' => array_shift($arFiledList)])
+            ->setMessage($obException->getMessage())
+            ->setCode($obException->getCode());
     }
 }

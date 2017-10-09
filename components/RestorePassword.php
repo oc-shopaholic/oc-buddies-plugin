@@ -1,12 +1,12 @@
 <?php namespace Lovata\Buddies\Components;
 
-use Kharanenka\Helper\Result;
-use Lovata\Buddies\Models\Settings;
 use Mail;
 use Lang;
-use Lovata\Buddies\Models\User;
-use Validator;
 use Input;
+use Kharanenka\Helper\Result;
+use October\Rain\Support\Collection;
+use Lovata\Buddies\Models\Settings;
+use Lovata\Buddies\Models\User;
 
 /**
  * Class RestorePassword
@@ -15,8 +15,6 @@ use Input;
  */
 class RestorePassword extends Buddies
 {
-    protected $sMode = null;
-
     /**
      * @return array
      */
@@ -37,28 +35,16 @@ class RestorePassword extends Buddies
     }
 
     /**
-     * Init component data
-     */
-    protected function initData()
-    {
-        $this->sMode = $this->property('mode');
-        if(empty($this->sMode)) {
-            $this->sMode = self::MODE_AJAX;
-        }
-    }
-
-    /**
      * Trigger the password reset email
      * @return \Illuminate\Http\RedirectResponse|null
      */
     public function onRun()
     {
-        $this->initData();
         if($this->sMode != self::MODE_SUBMIT) {
             return null;
         }
 
-        $arUserData = Input::get('user');
+        $arUserData = Input::all();
         if(empty($arUserData)) {
             return null;
         }
@@ -73,10 +59,8 @@ class RestorePassword extends Buddies
      */
     public function onSendMail()
     {
-        $this->initData();
-
         //Get user data
-        $arUserData = Input::get('user');
+        $arUserData = Input::all();
         $this->sendRestoreMail($arUserData);
 
         return $this->getResponseModeAjax();
@@ -85,63 +69,53 @@ class RestorePassword extends Buddies
     /**
      * Send restore password mail
      * @param $arUserData
-     * @return void
+     * @return bool
      */
-    protected function sendRestoreMail($arUserData)
+    public function sendRestoreMail($arUserData)
     {
-        if(empty($arUserData)) {
-            $arErrorData = [
-                'message'   => Lang::get('lovata.toolbox::lang.message.e_not_correct_request'),
-                'field'     => null,
-            ];
+        if(empty($arUserData) || !is_array($arUserData)) {
 
-            Result::setFalse($arErrorData);
-            return;
+            $sMessage = Lang::get('lovata.toolbox::lang.message.e_not_correct_request');
+            Result::setMessage($sMessage);
+            return false;
         }
 
         //Check user auth
         if(!empty($this->obUser)) {
 
-            $arErrorData = [
-                'message'   => Lang::get('lovata.buddies::lang.message.e_auth_fail'),
-                'field'     => null,
-            ];
-
-            Result::setFalse($arErrorData);
-            return;
+            $sMessage = Lang::get('lovata.buddies::lang.message.e_auth_fail');
+            Result::setMessage($sMessage);
+            return false;
         }
 
-        //Get validation data
-        $arMessages = $this->getDefaultValidationMessage();
-        $arRules = [
-            'email' => 'required|email',
-        ];
+        //Make collection
+        $obUserData = Collection::make($arUserData);
+        if(empty($obUserData->get('email'))) {
 
-        $obValidator = Validator::make($arUserData, $arRules, $arMessages);
-        if($obValidator->fails()) {
+            $sMessage = Lang::get('system::validation.required',
+                ['attribute' => Lang::get('lovata.toolbox::lang.field.email')]
+            );
 
-            $arErrorData = $this->getValidationError($obValidator);
-            Result::setFalse($arErrorData);
-            return;
+            Result::setFalse(['field' => 'email'])->setMessage($sMessage);
+            return false;
         }
 
         //Get User object
         /** @var User $obUser */
-        $obUser = User::active()->getByEmail($arUserData['email'])->first();
+        $obUser = User::active()->getByEmail($obUserData->get('email'))->first();
         if(empty($obUser)) {
 
-            $arErrorData = [
-                'message'   => Lang::get('lovata.buddies::lang.message.e_user_not_found', ['user' => $arUserData['email']]),
-                'field'     => 'email',
-            ];
+            $sMessage = Lang::get('lovata.buddies::lang.message.e_user_not_found',
+                ['user' => $obUserData->get('email')]
+            );
 
-            Result::setFalse($arErrorData);
-            return;
+            Result::setFalse(['field' => 'email'])->setMessage($sMessage);
+            return false;
         }
 
         $arData = [
-            'name' => $obUser->name,
-            'code' => $obUser->getRestoreCode(),
+            'name'     => $obUser->name,
+            'code'     => $obUser->getRestoreCode(),
             'site_url' => env('SITE_URL'),
         ];
 
@@ -166,11 +140,9 @@ class RestorePassword extends Buddies
             });
         }
 
-        $arResult = [
-            'message'   => Lang::get('lovata.buddies::lang.message.restore_mail_send_success'),
-            'user'     => $obUser->getData(),
-        ];
+        $sMessage = Lang::get('lovata.buddies::lang.message.restore_mail_send_success');
+        Result::setMessage($sMessage)->setTrue($obUser->id);
 
-        Result::setTrue($arResult);
+        return true;
     }
 }

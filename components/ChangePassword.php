@@ -3,9 +3,8 @@
 use Input;
 use Lang;
 use Hash;
+use October\Rain\Support\Collection;
 use Kharanenka\Helper\Result;
-use Lovata\Buddies\Models\Settings;
-use Validator;
 use Lovata\Toolbox\Traits\Helpers\TraitComponentNotFoundResponse;
 
 /**
@@ -16,8 +15,6 @@ use Lovata\Toolbox\Traits\Helpers\TraitComponentNotFoundResponse;
 class ChangePassword extends Buddies
 {
     use TraitComponentNotFoundResponse;
-
-    protected $sMode = null;
 
     /**
      * @return array
@@ -51,7 +48,6 @@ class ChangePassword extends Buddies
      */
     public function onRun()
     {
-        $this->initData();
         if($this->sMode != self::MODE_SUBMIT) {
             return null;
         }
@@ -63,7 +59,7 @@ class ChangePassword extends Buddies
         }
 
         //Get user data
-        $arUserData = Input::get('user');
+        $arUserData = Input::all();
         if(empty($arUserData)) {
             return null;
         }
@@ -73,37 +69,21 @@ class ChangePassword extends Buddies
     }
 
     /**
-     * Init component data
-     */
-    protected function initData()
-    {
-        $this->sMode = $this->property('mode');
-        if(empty($this->sMode)) {
-            $this->sMode = self::MODE_AJAX;
-        }
-    }
-
-    /**
      * Ajax handler - change password
      * @return \Illuminate\Http\RedirectResponse|array
      */
     public function onAjax()
     {
-        $this->initData();
-
         $iUserID = $this->property('slug');
         if(empty($iUserID) || empty($this->obUser) || ($this->obUser->id != $iUserID)) {
-            $arErrorData = [
-                'message'   => Lang::get('lovata.toolbox::lang.message.e_not_correct_request'),
-                'field'     => 'password',
-            ];
 
-            Result::setFalse($arErrorData);
+            $sMessage = Lang::get('lovata.toolbox::lang.message.e_not_correct_request');
+            Result::setMessage($sMessage);
             return $this->getResponseModeAjax();
         }
 
         //Get user data
-        $arUserData = Input::get('user');
+        $arUserData = Input::all();
         $this->changePassword($arUserData);
 
         return $this->getResponseModeAjax();
@@ -112,65 +92,56 @@ class ChangePassword extends Buddies
     /**
      * Change user password
      * @param $arUserData
+     *
+     * @return  bool
      */
-    protected function changePassword($arUserData)
+    public function changePassword($arUserData)
     {
-        if(empty($arUserData) || empty($this->obUser)) {
-            $arErrorData = [
-                'message'   => Lang::get('lovata.toolbox::lang.message.e_not_correct_request'),
-                'field'     => 'password',
-            ];
+        if(empty($arUserData) || !is_array($arUserData) || empty($this->obUser)) {
 
-            Result::setFalse($arErrorData);
-            return;
+            $sMessage = Lang::get('lovata.toolbox::lang.message.e_not_correct_request');
+            Result::setMessage($sMessage);
+            return false;
         }
 
-        //Set validation data
-        $arMessages = $this->getDefaultValidationMessage();
-        $arRules = [
-            'password'                  => 'required:create|max:255|confirmed',
-            'password_confirmation'     => 'required_with:password|max:255',
-        ];
+        //Make collection
+        $obUserData = Collection::make($arUserData);
 
-        $iPasswordLengthMin = Settings::getValue('password_limit_min');
-        if($iPasswordLengthMin > 0) {
-            $arRules['password'] = $arRules['password'].'|min:'.$iPasswordLengthMin;
+        if(empty($obUserData->get('password'))) {
+
+            $sMessage = Lang::get('system::validation.required',
+                ['attribute' => Lang::get('lovata.toolbox::lang.field.password')]
+            );
+
+            Result::setFalse(['field' => 'password'])->setMessage($sMessage);
+            return false;
         }
 
-        $sPasswordRegexp = Settings::getValue('password_regexp');
-        if(!empty($sPasswordRegexp)) {
-            $arRules['password'] = $arRules['password'].'|regex:%^'.$sPasswordRegexp.'$%';
-        }
+        $bCheckOldPassword = $this->property('check_old_password');
+        $sOldPassword = $obUserData->get('old_password');
 
-        //Check validation
-        $obValidator = Validator::make($arUserData, $arRules, $arMessages);
-        if($obValidator->fails()) {
-            $arErrorData = $this->getValidationError($obValidator);
-            Result::setFalse($arErrorData);
-            return;
-        }
+        if($bCheckOldPassword && !Hash::check($sOldPassword, $this->obUser->password)) {
 
-        if($this->property('check_old_password') && !Hash::check($arUserData['old_password'], $this->obUser->password)) {
-
-            $arErrorData = [
-                'message'   => Lang::get('lovata.buddies::lang.message.e_check_old_password'),
-                'field'     => 'password',
-            ];
-
-            Result::setFalse($arErrorData);
-            return;
+            $sMessage = Lang::get('lovata.buddies::lang.message.e_check_old_password');
+            Result::setFalse(['field' => 'password'])->setMessage($sMessage);
+            return false;
         }
 
         //Set new password
-        $this->obUser->password_change = true;
-        $this->obUser->password = $arUserData['password'];
-        $this->obUser->password_confirmation = $arUserData['password'];
-        $this->obUser->save();
+        $this->obUser->password = $obUserData->get('password');
+        $this->obUser->password_confirmation = $obUserData->get('password_confirmation');
 
-        $arResult = [
-            'message'   => Lang::get('lovata.buddies::lang.message.password_change_success'),
-        ];
+        try {
+            $this->obUser->save();
+        } catch (\October\Rain\Database\ModelException $obException) {
 
-        Result::setTrue($arResult);
+            $this->processValidationError($obException);
+            return false;
+        }
+
+        $sMessage = Lang::get('lovata.buddies::lang.message.password_change_success');
+        Result::setMessage($sMessage)->setTrue();
+
+        return true;
     }
 }

@@ -17,10 +17,16 @@ columns:
         type: text
         searchable: true
         sortable: true
+    phone:
+        label: 'lovata.toolbox::lang.field.phone'
+        type: text
+        searchable: true
+        sortable: true
     id:
         label: 'lovata.toolbox::lang.field.id'
         type: number
         sortable: true
+        searchable: true
         width: 100px
     created_at:
         label: 'lovata.toolbox::lang.field.created_at'

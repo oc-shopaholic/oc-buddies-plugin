@@ -1,14 +1,12 @@
 <?php namespace Lovata\Buddies\Components;
 
-use Lovata\Buddies\Models\Settings;
 use Lang;
-use Lovata\Buddies\Facades\BuddiesAuth;
+use Mail;
+use Input;
 use Kharanenka\Helper\Result;
 use Lovata\Buddies\Models\User;
-use System\Classes\PluginManager;
-use Validator;
-use Input;
-use Mail;
+use Lovata\Buddies\Models\Settings;
+use Lovata\Buddies\Facades\AuthHelper;
 
 /**
  * Class Registration
@@ -20,8 +18,6 @@ class Registration extends Buddies
     const ACTIVATION_ON = 'activation_on';
     const ACTIVATION_OFF = 'activation_off';
     const ACTIVATION_MAIL = 'activation_mail';
-
-    protected $sMode = null;
 
     /**
      * @return array
@@ -41,27 +37,21 @@ class Registration extends Buddies
     {
         $arResult = $this->getModeProperty();
         $arResult['activation'] = [
-            'title'             => 'lovata.buddies::lang.component.property_activation',
-            'type'              => 'dropdown',
-            'options'           => [
-                self::ACTIVATION_OFF    => Lang::get('lovata.buddies::lang.component.property_'.self::ACTIVATION_OFF),
-                self::ACTIVATION_ON     => Lang::get('lovata.buddies::lang.component.property_'.self::ACTIVATION_ON),
-                self::ACTIVATION_MAIL   => Lang::get('lovata.buddies::lang.component.property_'.self::ACTIVATION_MAIL),
+            'title'   => 'lovata.buddies::lang.component.property_activation',
+            'type'    => 'dropdown',
+            'options' => [
+                self::ACTIVATION_OFF  => Lang::get('lovata.buddies::lang.component.property_' . self::ACTIVATION_OFF),
+                self::ACTIVATION_ON   => Lang::get('lovata.buddies::lang.component.property_' . self::ACTIVATION_ON),
+                self::ACTIVATION_MAIL => Lang::get('lovata.buddies::lang.component.property_' . self::ACTIVATION_MAIL),
             ]
         ];
 
-        return $arResult;
-    }
+        $arResult['force_login'] = [
+            'title'   => 'lovata.buddies::lang.component.property_force_login',
+            'type'    => 'checkbox',
+        ];
 
-    /**
-     * Init component data
-     */
-    protected function initData()
-    {
-        $this->sMode = $this->property('mode');
-        if(empty($this->sMode)) {
-            $this->sMode = self::MODE_AJAX;
-        }
+        return $arResult;
     }
 
     /**
@@ -70,12 +60,11 @@ class Registration extends Buddies
      */
     public function onRun()
     {
-        $this->initData();
         if($this->sMode != self::MODE_SUBMIT) {
             return null;
         }
 
-        $arUserData = Input::get('user');
+        $arUserData = Input::all();
         if(empty($arUserData)) {
             return null;
         }
@@ -90,10 +79,8 @@ class Registration extends Buddies
      */
     public function onAjax()
     {
-        $this->initData();
-
         //Get user data
-        $arUserData = Input::get('user');
+        $arUserData = Input::all();
         $this->registration($arUserData);
 
         return $this->getResponseModeAjax();
@@ -102,81 +89,56 @@ class Registration extends Buddies
     /**
      * User registration
      * @param $arUserData
-     * @return void
+     * @return User|null
      */
-    protected function registration($arUserData)
+    public function registration($arUserData)
     {
-        if(empty($arUserData)) {
-            $arErrorData = [
-                'message'   => Lang::get('lovata.toolbox::lang.message.e_not_correct_request'),
-                'field'     => null,
-            ];
+        if(empty($arUserData) || !is_array($arUserData)) {
 
-            Result::setFalse($arErrorData);
-            return;
+            $sMessage = Lang::get('lovata.toolbox::lang.message.e_not_correct_request');
+            Result::setMessage($sMessage);
+            return null;
         }
         
         //Check user auth
         if(!empty($this->obUser)) {
 
-            $arErrorData = [
-                'message'   => Lang::get('lovata.buddies::lang.message.e_auth_fail'),
-                'field'     => null,
-            ];
-
-            Result::setFalse($arErrorData);
-            return;
+            $sMessage = Lang::get('lovata.buddies::lang.message.e_auth_fail');
+            Result::setMessage($sMessage);
+            return null;
         }
 
-        $arMessages = $this->getDefaultValidationMessage();
-        $arMessages['email.unique'] = Lang::get('lovata.buddies::lang.message.e_email_unique');
+        $sActivationType = $this->property('activation');
+        $bUserActivate = $sActivationType == self::ACTIVATION_ON;
 
-        //Default validation 
-        $obValidator = Validator::make($arUserData, User::getValidationRules(), $arMessages);
-
-        if($obValidator->fails()) {
-            $arErrorData = $this->getValidationError($obValidator);
-            Result::setFalse($arErrorData);
-            return;
+        try {
+            //Create new user
+            $obUser = AuthHelper::register($arUserData, $bUserActivate);
+        } catch (\October\Rain\Database\ModelException $obException) {
+            $this->processValidationError($obException);
+            return null;
         }
 
-        //Custom validation
-        if(PluginManager::instance()->hasPlugin('Lovata.CustomBuddies')) {
-            \Lovata\CustomBuddies\Classes\RegistrationExtend::extendValidation($arUserData);
-            if(!Result::flag()) {
-                return;
-            }
-        }
-
-        //Create new user
-        /** @var User $obUser */
-        $obUser = BuddiesAuth::register($arUserData, true);
         if(empty($obUser)) {
 
-            $arErrorData = [
-                'message'   => Lang::get('lovata.buddies::lang.message.e_user_create'),
-                'field'     => null,
-            ];
-
-            Result::setFalse($arErrorData);
-            return;
+            $sMessage = Lang::get('lovata.buddies::lang.message.e_user_create');
+            Result::setMessage($sMessage);
+            return null;
         }
 
         //User activation
         $this->afterRegistrationActivate($obUser);
         
         if($this->property('force_login')) {
-            BuddiesAuth::login($obUser);
+            AuthHelper::login($obUser);
         }
 
         $this->obUser = $obUser;
 
-        $arResult = [
-            'message'   => Lang::get('lovata.buddies::lang.message.registration_success'),
-            'user'     => $obUser->getData(),
-        ];
+        $sMessage = Lang::get('lovata.buddies::lang.message.registration_success');
+        Result::setMessage($sMessage)->setTrue($obUser->id);
 
-        Result::setTrue($arResult);
+        return $obUser;
     }
 
     /**
@@ -189,12 +151,9 @@ class Registration extends Buddies
             return;
         }
         
-        $iActivationType = $this->property('activation');
-        switch($iActivationType) {
+        $sActivationType = $this->property('activation');
+        switch($sActivationType) {
             case self::ACTIVATION_ON:
-                $obUser->activation_code = null;
-                $obUser->is_activated = true;
-                $obUser->activated_at = $obUser->freshTimestamp();
                 break;
             case self::ACTIVATION_OFF:
                 $obUser->activation_code = $obUser->getActivationCode();

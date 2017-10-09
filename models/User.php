@@ -3,15 +3,10 @@
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Kharanenka\Helper\CCache;
-use Kharanenka\Helper\CustomValidationMessage;
 use Kharanenka\Helper\DataFileModel;
 use Kharanenka\Scope\NameField;
 use Lovata\Buddies\Plugin;
-use Lovata\Toolbox\Plugin as  ToolboxPlugin;
-use Lovata\Toolbox\Traits\Helpers\TraitClassExtension;
 use October\Rain\Auth\Models\User as UserModel;
-use October\Rain\Database\Builder;
-use System\Classes\PluginManager;
 
 /**
  * Class User
@@ -56,47 +51,61 @@ use System\Classes\PluginManager;
  */
 class User extends UserModel
 {
-    use CustomValidationMessage;
-    use TraitClassExtension;
     use DataFileModel;
     use NameField;
-
+    
     const CACHE_TAG_ELEMENT = 'buddies-user-element';
     
     public $table = 'lovata_buddies_users';
 
-    public $rules = [];
-    public $customMessages = [];
-    public $attributeNames = [];
+    public $rules = [
+        'email'                 => 'required|email|unique:lovata_buddies_users|max:255',
+        'password'              => 'required:create|max:255|confirmed',
+        'password_confirmation' => 'required_with:password|max:255',
+    ];
+    public $attributeNames = [
+        'email'    => 'lovata.toolbox::lang.field.email',
+        'password' => 'lovata.toolbox::lang.field.password',
+    ];
+
+    public $fillable = [
+        'email',
+        'password',
+        'password_change',
+        'password_confirmation',
+        'name',
+        'last_name',
+        'middle_name',
+        'middle_name',
+        'phone',
+        'phone_list',
+        'property',
+    ];
+
     public $dates = ['created_at', 'updated_at', 'deleted_at', 'activated_at', 'last_login'];
     public $attachOne = ['avatar' => ['System\Models\File']];
     public $casts = ['property' => 'array'];
     public $purgeable = ['password_confirmation', 'password_change'];
+    protected $hashable = ['password', 'persist_code', 'password_confirmation'];
     public $appends = ['phone_list'];
 
     public $belongsToMany = [
-        'groups' => ['Lovata\Buddies\Models\Group', 'table' => 'lovata_buddies_users_groups', 'key' => 'user_id']
+        'groups' => [Group::class, 'table' => 'lovata_buddies_users_groups', 'key' => 'user_id']
     ];
 
-    /**
-     * User constructor.
-     * @param array $attributes
-     */
-    public function __construct(array $attributes = [])
-    {
-        $this->rules = self::getValidationRules();
-        
-        $this->setCustomMessage(ToolboxPlugin::NAME, ['required', 'unique', 'max.string', 'min.string', 'confirmed', 'email', 'regex']);
-        $this->setCustomAttributeName(Plugin::NAME, ['email', 'password']);
-        
-        parent::__construct($attributes);
-    }
-
+//    public function beforeValidate()
+//    {
+//        if(empty($this->id) && empty($this->password) && empty($this->password_confirmation)) {
+//            $this->password = $this->email;
+//            $this->password_confirmation = $this->email;
+//        }
+//    }
+    
     /**
      * Get validation array rules
      * @return array
      */
-    public static function getValidationRules() {
+    public static function  getValidationRules() {
         
         $arResult = [
             'email'                 => 'required|email|unique:lovata_buddies_users|max:255',
@@ -118,17 +127,6 @@ class User extends UserModel
     }
 
     /**
-     * Set password attribute method
-     * @param string $sValue
-     */
-    public function setPasswordAttribute($sValue)
-    {
-        if(!isset($this->attributes['password']) || empty($this->attributes['password']) || (!empty($sValue) && $this->password_change)) {
-            $this->attributes['password'] = $sValue;
-        }
-    }
-
-    /**
      * Before delete model method
      */
     public function beforeDelete()
@@ -137,7 +135,7 @@ class User extends UserModel
         $this->email = 'removed'.$sTime.'@removed.del';
         $this->save();
     }
-
+    
     /**
      * After save method
      */
@@ -180,47 +178,9 @@ class User extends UserModel
             'property'      => $this->getPropertyValue(),
         ];
 
-        self::extendMethodResult(__FUNCTION__, $arResult, [$this]);
         return $arResult;
     }
 
-    /**
-     * Get cached data
-     * @param int $iElementID
-     * @param null|User $obElement
-     * @return array|null
-     */
-    public static function getCacheData($iElementID, $obElement = null)
-    {
-        if(empty($iElementID)) {
-            return null;
-        }
-
-        //Get cache data
-        $arCacheTags = [Plugin::CACHE_TAG, self::CACHE_TAG_ELEMENT];
-        $sCacheKey = $iElementID;
-
-        $arResult = CCache::get($arCacheTags, $sCacheKey);
-        if(empty($arResult)) {
-            
-            //Get element object
-            if(empty($obElement)) {
-                $obElement = self::active()->find($iElementID);
-            }
-
-            if(empty($obElement)) {
-                return null;
-            }
-
-            $arResult = $obElement->getData();
-            
-            //Set cache data
-            CCache::forever($arCacheTags, $sCacheKey, $arResult);
-        }
-
-        self::extendMethodResult(__FUNCTION__, $arResult);
-        return $arResult;
-    }
 
     /**
      * Get property values
@@ -252,6 +212,16 @@ class User extends UserModel
         }
 
         return $arResult;
+    }
+
+    /**
+     * User activate
+     */
+    public function activate()
+    {
+        $this->activation_code = null;
+        $this->is_activated = true;
+        $this->activated_at = $this->freshTimestamp();
     }
 
     /**
@@ -342,25 +312,25 @@ class User extends UserModel
     {
         $sPhone = $this->phone;
         if(empty($sPhone)) {
-            return null;
+            return [];
         }
-
+        
         $arResult = [];
-
+        
         //Explode 'phone' field
         $arPhoneList = explode(',', $sPhone);
         foreach($arPhoneList as $sPhoneNumber) {
-
+            
             //Trim phone
             $sPhoneNumber = trim($sPhoneNumber);
             if(empty($sPhoneNumber)) {
                 continue;
             }
-
+            
             //Add phone to result
             $arResult[] = $sPhoneNumber;
         }
-
+        
         return $arResult;
     }
 
@@ -373,7 +343,7 @@ class User extends UserModel
         if(empty($arValue) || !is_array($arValue)) {
             return;
         }
-
+        
         //Prepare phone list
         $arPhoneList = [];
         foreach($arValue as $sValue) {
@@ -381,10 +351,10 @@ class User extends UserModel
             if(empty($sValue)) {
                 continue;
             }
-
+            
             $arPhoneList[] = $sValue;
         }
-
+        
         //Save phone list to "phone" field
         $this->phone = implode(',', $arPhoneList);
     }

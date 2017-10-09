@@ -1,12 +1,10 @@
 <?php namespace Lovata\Buddies;
 
-use Lang;
 use App;
-use Lovata\Buddies\Controllers\Users;
-use Lovata\Buddies\Models\User;
-use Lovata\Buddies\Models\Property;
-use October\Rain\Database\Collection;
+use Lang;
 use Illuminate\Foundation\AliasLoader;
+use Lovata\Buddies\Classes\AuthHelperManager;
+use Lovata\Buddies\Facades\AuthHelper;
 use System\Classes\PluginBase;
 
 /**
@@ -48,20 +46,12 @@ class Plugin extends PluginBase
                 'icon'        => 'icon-cogs',
                 'description' => 'lovata.buddies::lang.plugin.description',
                 'class'       => 'Lovata\Buddies\Models\Settings',
-                'order'       => 100
+                'order'       => 100,
+                'permissions' => [
+                    'buddies-menu-settings'
+                ],
             ]
         ];
-    }
-
-    public function register()
-    {
-        $alias = AliasLoader::getInstance();
-        $alias->alias('BuddiesAuth', 'Lovata\Buddies\Facades\BuddiesAuth');
-
-        App::singleton('buddies.auth', function() {
-            return \Lovata\Buddies\Classes\BuddiesAuthManager::instance();
-        });
-
     }
 
     /**
@@ -75,6 +65,22 @@ class Plugin extends PluginBase
         ];
     }
 
+    /**
+     * Register method of plugin
+     */
+    public function register()
+    {
+        $obAlias = AliasLoader::getInstance();
+        $obAlias->alias('AuthHelper', 'Lovata\Buddies\Facades\AuthHelper');
+
+        App::singleton('auth.helper', function() {
+            return AuthHelperManager::instance();
+        });
+    }
+
+    /**
+     * Boot plugin method
+     */
     public function boot()
     {
         $this->extendUserFields();
@@ -85,37 +91,37 @@ class Plugin extends PluginBase
      */
     protected function extendUserFields()
     {
-        Users::extendFormFields(function($form, $model, $context) {
-
-            /** @var \Backend\Widgets\Form $form */
-            /** @var User $model */
-
-            // Only for the Product model
-            if (!$model instanceof User || empty($context)) {
-                return;
-            }
-
-            /** @var Collection $obPropertyList */
-            $obPropertyList = Property::active()->orderBy('sort_order', 'asc')->get();
-            if($obPropertyList->isEmpty()) {
-                return;
-            }
-
-            //Get widget data for properties
-            $arAdditionPropertyData = [];
-            /** @var Property $obProperty */
-            foreach($obPropertyList as $obProperty) {
-
-                $arPropertyData = $obProperty->getWidgetData();
-                if(!empty($arPropertyData)) {
-                    $arAdditionPropertyData[Property::NAME.'['.$obProperty->code.']'] = $arPropertyData;
-                }
-            }
-
-            // Add fields
-            if(!empty($arAdditionPropertyData)) {
-                $form->addTabFields($arAdditionPropertyData);
-            }
-        });
+//        Users::extendFormFields(function($form, $model, $context) {
+//
+//            /** @var \Backend\Widgets\Form $form */
+//            /** @var User $model */
+//
+//            // Only for the Product model
+//            if (!$model instanceof User || empty($context)) {
+//                return;
+//            }
+//
+//            /** @var Collection $obPropertyList */
+//            $obPropertyList = Property::active()->orderBy('sort_order', 'asc')->get();
+//            if($obPropertyList->isEmpty()) {
+//                return;
+//            }
+//
+//            //Get widget data for properties
+//            $arAdditionPropertyData = [];
+//            /** @var Property $obProperty */
+//            foreach($obPropertyList as $obProperty) {
+//
+//                $arPropertyData = $obProperty->getWidgetData();
+//                if(!empty($arPropertyData)) {
+//                    $arAdditionPropertyData[Property::NAME.'['.$obProperty->code.']'] = $arPropertyData;
+//                }
+//            }
+//
+//            // Add fields
+//            if(!empty($arAdditionPropertyData)) {
+//                $form->addTabFields($arAdditionPropertyData);
+//            }
+//        });
     }
 }

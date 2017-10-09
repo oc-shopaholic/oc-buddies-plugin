@@ -1,8 +1,8 @@
 <?php namespace Lovata\Buddies\Components;
 
-use Lovata\Toolbox\Traits\Helpers\TraitComponentNotFoundResponse;
-use Lovata\Buddies\Models\User;
 use Cms\Classes\ComponentBase;
+use Lovata\Buddies\Models\User;
+use Lovata\Toolbox\Traits\Helpers\TraitComponentNotFoundResponse;
 
 /**
  * Class ActivationPage
@@ -51,9 +51,7 @@ class ActivationPage extends ComponentBase
             return $this->getErrorResponse();
         }
 
-        $obUser->activation_code = null;
-        $obUser->is_activated = true;
-        $obUser->activated_at = $obUser->freshTimestamp();
+        $obUser->activate();
         $obUser->forceSave();
         
         return null;
