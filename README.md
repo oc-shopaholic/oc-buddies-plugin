@@ -1,5 +1,5 @@
 ## Plugin settings
-    Backend -> Settings -> Shopaholic:
+    Backend -> Settings -> Buddies:
  1. **Settings sending of emails**
     - You can eneble the sending of emails with queue and set name of queue.
 

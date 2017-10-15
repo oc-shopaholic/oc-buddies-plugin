@@ -6,7 +6,7 @@ use October\Rain\Database\Model;
 
 /**
  * Class Settings
- * @package Lovata\Shopaholic\Models
+ * @package Lovata\Buddies\Models
  * @author Andrey Kharanenka, a.khoronenko@lovata.com, LOVATA Group
  */
 class Settings extends Model {

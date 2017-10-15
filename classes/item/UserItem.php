@@ -1,6 +1,6 @@
 <?php namespace Lovata\Buddies\Classes\Item;
 
-use Lovata\Shopaholic\Plugin;
+use Lovata\Buddies\Plugin;
 use Lovata\Buddies\Models\User;
 
 use Lovata\Toolbox\Classes\Item\ElementItem;
