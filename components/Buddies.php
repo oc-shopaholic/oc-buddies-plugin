@@ -10,6 +10,7 @@ use Cms\Classes\ComponentBase;
 use Kharanenka\Helper\Result;
 use Lovata\Buddies\Models\User;
 use Lovata\Buddies\Facades\AuthHelper;
+use Lovata\Toolbox\Traits\Helpers\TraitValidationHelper;
 
 /**
  * Class Buddies
@@ -18,6 +19,8 @@ use Lovata\Buddies\Facades\AuthHelper;
  */
 abstract class Buddies extends ComponentBase
 {
+    use TraitValidationHelper;
+
     const MODE_SUBMIT = 'submit';
     const MODE_AJAX = 'ajax';
 
@@ -176,16 +179,4 @@ abstract class Buddies extends ComponentBase
         return Redirect::to($sRedirectURL);
     }
 
-    /**
-     * Process validation error data
-     * @param \October\Rain\Database\ModelException $obException
-     */
-    protected function processValidationError(&$obException)
-    {
-        $arFiledList = array_keys($obException->getFields());
-
-        Result::setFalse(['field' => array_shift($arFiledList)])
-            ->setMessage($obException->getMessage())
-            ->setCode($obException->getCode());
-    }
 }

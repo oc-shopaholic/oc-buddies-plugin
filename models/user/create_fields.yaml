@@ -37,7 +37,7 @@ tabs:
             type: text
             tab: 'lovata.buddies::lang.tab.data'
         password:
-            label: 'lovata.buddies::lang.field.password'
+            label: 'lovata.toolbox::lang.field.password'
             oc.commentPosition: ''
             span: left
             type: password
