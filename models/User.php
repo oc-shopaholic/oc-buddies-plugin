@@ -1,11 +1,7 @@
 <?php namespace Lovata\Buddies\Models;
 
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
-use Kharanenka\Helper\CCache;
-use Kharanenka\Helper\DataFileModel;
 use Kharanenka\Scope\NameField;
-use Lovata\Buddies\Plugin;
+use Kharanenka\Helper\DataFileModel;
 use October\Rain\Auth\Models\User as UserModel;
 
 /**
@@ -32,17 +28,17 @@ use October\Rain\Auth\Models\User as UserModel;
  * @property string $persist_code
  * @property string $reset_password_code
  * @property string $permissions
- * @property Carbon $activated_at
- * @property Carbon $last_login
+ * @property \October\Rain\Argon\Argon $activated_at
+ * @property \October\Rain\Argon\Argon $last_login
  * @property bool $is_superuser
  * @property array $property
- * @property Carbon $created_at
- * @property Carbon $updated_at
- * @property Carbon $deleted_at
+ * @property \October\Rain\Argon\Argon $created_at
+ * @property \October\Rain\Argon\Argon $updated_at
+ * @property \October\Rain\Argon\Argon $deleted_at
  *
  * @property \System\Models\File $avatar
  *
- * @property Collection|Group[] $groups
+ * @property \Illuminate\Database\Eloquent\Collection|Group[] $groups
  * 
  * @method static $this active()
  * @method static $this notActive()
@@ -93,37 +89,15 @@ class User extends UserModel
         'groups' => [Group::class, 'table' => 'lovata_buddies_users_groups', 'key' => 'user_id']
     ];
 
-//    public function beforeValidate()
-//    {
-//        if(empty($this->id) && empty($this->password) && empty($this->password_confirmation)) {
-//            $this->password = $this->email;
-//            $this->password_confirmation = $this->email;
-//        }
-//    }
-    
     /**
-     * Get validation array rules
-     * @return array
+     * Before validate method
      */
-    public static function  getValidationRules() {
-        
-        $arResult = [
-            'email'                 => 'required|email|unique:lovata_buddies_users|max:255',
-            'password'              => 'required:create|max:255|confirmed',
-            'password_confirmation' => 'required_with:password|max:255',
-        ];
-
-        $iPasswordLengthMin = Settings::getValue('password_limit_min');
-        if($iPasswordLengthMin > 0) {
-            $arResult['password'] = $arResult['password'].'|min:'.$iPasswordLengthMin;
+    public function beforeValidate()
+    {
+        if(empty($this->id) && empty($this->password) && empty($this->password_confirmation)) {
+            $this->password = $this->email;
+            $this->password_confirmation = $this->email;
         }
-
-        $sPasswordRegexp = Settings::getValue('password_regexp');
-        if(!empty($sPasswordRegexp)) {
-            $arResult['password'] = $arResult['password'].'|regex:%^'.$sPasswordRegexp.'$%';
-        }
-        
-        return $arResult;
     }
 
     /**
@@ -134,84 +108,6 @@ class User extends UserModel
         $sTime = str_replace('.', '', microtime(true));
         $this->email = 'removed'.$sTime.'@removed.del';
         $this->save();
-    }
-    
-    /**
-     * After save method
-     */
-    public function afterSave()
-    {
-        $this->clearCache();
-    }
-
-    /**
-     * After delete method
-     */
-    public function afterDelete()
-    {
-        $this->clearCache();
-    }
-
-    /**
-     * Clear cache data
-     */
-    public function clearCache()
-    {
-        CCache::clear([Plugin::CACHE_TAG, self::CACHE_TAG_ELEMENT], $this->id);
-    }
-
-    /**
-     * Get element data
-     * @return array
-     */
-    public function getData()
-    {
-        $arResult = [
-            'id'            => $this->id,
-            'email'         => $this->email,
-            'name'          => $this->name,
-            'last_name'     => $this->last_name,
-            'middle_name'   => $this->middle_name,
-            'phone'         => $this->phone,
-            'phone_list'    => $this->phone_list,
-            'avatar'        => $this->getFileData('avatar'),
-            'property'      => $this->getPropertyValue(),
-        ];
-
-        return $arResult;
-    }
-
-
-    /**
-     * Get property values
-     * @return array
-     */
-    protected function getPropertyValue()
-    {
-        $arPropertyList = Property::getPropertyList();
-        if(empty($arPropertyList)) {
-            return [];
-        }
-
-        $arPropertyValues = $this->property;
-
-        $arResult = [];
-        foreach($arPropertyList as $arPropertyData) {
-
-            if(empty($arPropertyList)) {
-                continue;
-            }
-
-            $sValue = null;
-            if(!empty($arPropertyValues) && isset($arPropertyValues[$arPropertyData['code']])) {
-                $sValue = $arPropertyValues[$arPropertyData['code']];
-            }
-
-            $arResult[$arPropertyData['code']] = $arPropertyData;
-            $arResult[$arPropertyData['code']]['value'] = $sValue;
-        }
-
-        return $arResult;
     }
 
     /**

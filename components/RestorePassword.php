@@ -57,7 +57,7 @@ class RestorePassword extends Buddies
      * Send restore password mail (ajax request)
      * @return \Illuminate\Http\RedirectResponse|array
      */
-    public function onSendMail()
+    public function onAjax()
     {
         //Get user data
         $arUserData = Input::all();

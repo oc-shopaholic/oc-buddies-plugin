@@ -1,5 +1,7 @@
 <?php namespace Lovata\Buddies\Models;
 
+use Kharanenka\Scope\CodeField;
+use Kharanenka\Scope\NameField;
 use October\Rain\Auth\Models\Group as GroupBase;
 use October\Rain\Database\Traits\Validation;
 
@@ -23,6 +25,8 @@ use October\Rain\Database\Traits\Validation;
 class Group extends GroupBase
 {
     use Validation;
+    use NameField;
+    use CodeField;
     
     protected $table = 'lovata_buddies_groups';
 
@@ -42,7 +46,9 @@ class Group extends GroupBase
     public $belongsToMany = [
         'users' => [User::class, 'table' => 'lovata_buddies_users_groups']
     ];
-    
+
+
+    public $dates = ['created_at', 'updated_at'];
     public $fillable = [
         'name',
         'code',

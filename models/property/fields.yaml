@@ -4,8 +4,8 @@ fields:
         span: left
         default: 1
         type: switch
-    title:
-        label: 'lovata.toolbox::lang.field.title'
+    name:
+        label: 'lovata.toolbox::lang.field.name'
         oc.commentPosition: ''
         span: left
         required: 1
@@ -16,9 +16,9 @@ fields:
         oc.commentPosition: ''
         type: dropdown
     'settings[list]':
-        label: 'lovata.buddies::lang.field.property_list_value'
+        label: 'lovata.toolbox::lang.field.property_list_value'
         oc.commentPosition: ''
-        prompt: 'lovata.buddies::lang.button.add_property_value'
+        prompt: 'lovata.toolbox::lang.button.add_property_value'
         span: right
         type: repeater
         trigger:
@@ -28,30 +28,30 @@ fields:
         form:
             fields:
                 value:
-                    label: 'lovata.buddies::lang.field.value'
+                    label: 'lovata.toolbox::lang.field.value'
                     oc.commentPosition: ''
                     span: full
                     type: text
     'settings[datepicker]':
-        label: 'lovata.buddies::lang.field.mode'
+        label: 'lovata.toolbox::lang.field.mode'
         span: right
         oc.commentPosition: ''
         options:
-            date: 'lovata.buddies::lang.field.date'
-            datetime: 'lovata.buddies::lang.field.datetime'
-            time: 'lovata.buddies::lang.field.time'
+            date: 'lovata.toolbox::lang.field.date'
+            datetime: 'lovata.toolbox::lang.field.datetime'
+            time: 'lovata.toolbox::lang.field.time'
         trigger:
             action: show
             field: type
             condition: 'value[date]'
         type: dropdown
     'settings[mediafinder]':
-        label: 'lovata.buddies::lang.field.mode'
+        label: 'lovata.toolbox::lang.field.mode'
         span: right
         oc.commentPosition: ''
         options:
-            file: 'lovata.buddies::lang.field.file'
-            image: 'lovata.buddies::lang.field.image'
+            file: 'lovata.toolbox::lang.field.file'
+            image: 'lovata.toolbox::lang.field.image'
         trigger:
             action: show
             field: type

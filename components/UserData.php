@@ -1,5 +1,7 @@
 <?php namespace Lovata\Buddies\Components;
 
+use Lovata\Buddies\Classes\Item\UserItem;
+
 /**
  * Class UserData
  * @package Lovata\Buddies\Components
@@ -20,7 +22,7 @@ class UserData extends Buddies
 
     /**
      * Get auth user data
-     * @return array|null
+     * @return UserItem
      */
     public function get()
     {
@@ -28,15 +30,6 @@ class UserData extends Buddies
             return null;
         }
 
-        return $this->obUser->getData();
-    }
-
-    /**
-     * Get auth user data (ajax)
-     * @return array|null
-     */
-    public function onGet()
-    {
-        return $this->get();
+        return UserItem::make($this->obUser->id);
     }
 }

@@ -1,6 +1,6 @@
 columns:
-    title:
-        label: 'lovata.toolbox::lang.field.title'
+    name:
+        label: 'lovata.toolbox::lang.field.name'
         type: text
         searchable: true
         sortable: true
@@ -12,13 +12,14 @@ columns:
         type: text
         searchable: true
         sortable: true
-    type_name:
+    type:
         label: 'lovata.toolbox::lang.field.type'
         type: text
     id:
         label: 'lovata.toolbox::lang.field.id'
         type: number
         sortable: true
+        searchable: true
         width: 100px
     sort_order:
         label: 'lovata.toolbox::lang.field.sort_order'
@@ -27,11 +28,11 @@ columns:
         width: 150px
     created_at:
         label: 'lovata.toolbox::lang.field.created_at'
-        type: datetime
+        type: timetense
         invisible: true
         sortable: true
     updated_at:
         label: 'lovata.toolbox::lang.field.updated_at'
-        type: datetime
+        type: timetense
         invisible: true
         sortable: true

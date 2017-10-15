@@ -30,11 +30,11 @@ columns:
         width: 100px
     created_at:
         label: 'lovata.toolbox::lang.field.created_at'
-        type: datetime
+        type: timetense
         invisible: true
         sortable: true
     updated_at:
         label: 'lovata.toolbox::lang.field.updated_at'
-        type: datetime
+        type: timetense
         invisible: true
         sortable: true

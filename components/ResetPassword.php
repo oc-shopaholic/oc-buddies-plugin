@@ -70,7 +70,7 @@ class ResetPassword extends Buddies
      * Ajax handler - change password
      * @return \Illuminate\Http\RedirectResponse|array
      */
-    public function onChangePassword()
+    public function onAjax()
     {
         //Check user reset password code from URL
         if(!$this->checkResetCode()) {
