@@ -56,9 +56,6 @@
         'restore_password'      => 'Восстановление пароля',
         'restore_password_desc' => '',
 
-        'property_redirect_page'      => 'Redirect page',
-        'property_redirect_on'        => 'Redirect ON',
-        'property_flash_on'           => 'Flash ON',
         'property_force_login'        => 'Автоматическая авторизация',
         'property_activation'         => 'Активация пользователя',
         'property_activation_on'      => 'Включена',
@@ -66,9 +63,7 @@
         'property_activation_mail'    => 'Отправить письмо подтвеждения email адреса',
         'property_check_old_password' => 'Проверять действующий пароль на совпадение',
 
-        'property_mode' => 'Component mode',
-        'mode_submit'   => 'Form submit',
-        'mode_ajax'     => 'Ajax',
+
     ],
     'message' => [
         'e_user_create'                 => 'Ошибка при создании пользователя',

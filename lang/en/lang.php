@@ -56,9 +56,7 @@
         'restore_password'         => 'Restore password',
         'restore_password_desc'    => '',
 
-        'property_redirect_page'                => 'Redirect page',
-        'property_redirect_on'                  => 'Redirect ON',
-        'property_flash_on'                     => 'Flash ON',
+
         'property_force_login'                  => 'User will be authorized after registration',
         'property_activation'                   => 'User activation',
         'property_activation_on'                => 'ON',
@@ -66,9 +64,6 @@
         'property_activation_mail'              => 'Send activation email',
         'property_check_old_password'           => 'Check old password',
 
-        'property_mode'             => 'Component mode',
-        'mode_submit'               => 'Form submit',
-        'mode_ajax'                 => 'Ajax',
     ],
     'message' => [
         'e_user_create'                 => 'Error creating user',
