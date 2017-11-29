@@ -25,7 +25,7 @@ class Property extends CommonProperty
 
     public $attributeNames = [
         'name' => 'lovata.toolbox::lang.field.name',
-        'code' => 'lovata.toolbox::lang.field.name',
+        'code' => 'lovata.toolbox::lang.field.code',
     ];
 
     protected $fillable = [
