@@ -12,14 +12,14 @@ use October\Rain\Database\Traits\Validation;
  *
  * @mixin \October\Rain\Database\Builder
  * @mixin \Eloquent
- * 
+ *
  * @property int $id
  * @property string $name
  * @property string $code
  * @property string $description
  * @property \October\Rain\Argon\Argon $created_at
  * @property \October\Rain\Argon\Argon $updated_at
- * 
+ *
  * @property \October\Rain\Database\Collection|User[] $users
  */
 class Group extends GroupBase
@@ -27,7 +27,7 @@ class Group extends GroupBase
     use Validation;
     use NameField;
     use CodeField;
-    
+
     protected $table = 'lovata_buddies_groups';
 
     /**
@@ -42,9 +42,9 @@ class Group extends GroupBase
         'name' => 'lovata.toolbox::lang.field.name',
         'code' => 'lovata.toolbox::lang.field.code',
     ];
-    
+
     public $belongsToMany = [
-        'users' => [User::class, 'table' => 'lovata_buddies_users_groups']
+        'users' => [User::class, 'table' => 'lovata_buddies_users_groups'],
     ];
 
 
@@ -52,6 +52,6 @@ class Group extends GroupBase
     public $fillable = [
         'name',
         'code',
-        'description'
+        'description',
     ];
 }

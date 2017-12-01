@@ -18,10 +18,11 @@ class RestorePassword extends Buddies
     /**
      * @return array
      */
-    public function componentDetails() {
+    public function componentDetails()
+    {
         return [
             'name'        => 'lovata.buddies::lang.component.restore_password',
-            'description' => 'lovata.buddies::lang.component.restore_password_desc'
+            'description' => 'lovata.buddies::lang.component.restore_password_desc',
         ];
     }
 
@@ -31,6 +32,7 @@ class RestorePassword extends Buddies
     public function defineProperties()
     {
         $arResult = $this->getModeProperty();
+
         return $arResult;
     }
 
@@ -40,16 +42,17 @@ class RestorePassword extends Buddies
      */
     public function onRun()
     {
-        if($this->sMode != self::MODE_SUBMIT) {
+        if ($this->sMode != self::MODE_SUBMIT) {
             return null;
         }
 
         $arUserData = Input::all();
-        if(empty($arUserData)) {
+        if (empty($arUserData)) {
             return null;
         }
-        
+
         $this->sendRestoreMail($arUserData);
+
         return $this->getResponseModeForm();
     }
 
@@ -68,48 +71,50 @@ class RestorePassword extends Buddies
 
     /**
      * Send restore password mail
-     * @param $arUserData
+     * @param array $arUserData
      * @return bool
      */
     public function sendRestoreMail($arUserData)
     {
-        if(empty($arUserData) || !is_array($arUserData)) {
-
+        if (empty($arUserData) || !is_array($arUserData)) {
             $sMessage = Lang::get('lovata.toolbox::lang.message.e_not_correct_request');
             Result::setMessage($sMessage);
+
             return false;
         }
 
         //Check user auth
-        if(!empty($this->obUser)) {
-
+        if (!empty($this->obUser)) {
             $sMessage = Lang::get('lovata.buddies::lang.message.e_auth_fail');
             Result::setMessage($sMessage);
+
             return false;
         }
 
         //Make collection
         $obUserData = Collection::make($arUserData);
-        if(empty($obUserData->get('email'))) {
-
-            $sMessage = Lang::get('system::validation.required',
+        if (empty($obUserData->get('email'))) {
+            $sMessage = Lang::get(
+                'system::validation.required',
                 ['attribute' => Lang::get('lovata.toolbox::lang.field.email')]
             );
 
             Result::setFalse(['field' => 'email'])->setMessage($sMessage);
+
             return false;
         }
 
         //Get User object
         /** @var User $obUser */
         $obUser = User::active()->getByEmail($obUserData->get('email'))->first();
-        if(empty($obUser)) {
-
-            $sMessage = Lang::get('lovata.buddies::lang.message.e_user_not_found',
+        if (empty($obUser)) {
+            $sMessage = Lang::get(
+                'lovata.buddies::lang.message.e_user_not_found',
                 ['user' => $obUserData->get('email')]
             );
 
             Result::setFalse(['field' => 'email'])->setMessage($sMessage);
+
             return false;
         }
 
@@ -126,16 +131,16 @@ class RestorePassword extends Buddies
         $sQueueName = Settings::getValue('queue_name');
 
         //Send restore mail
-        if($bUseQueue && empty($sQueueName)) {
-            Mail::queue('lovata.buddies::mail.restore', $arData, function($message) use ($sUserEmail) {
+        if ($bUseQueue && empty($sQueueName)) {
+            Mail::queue('lovata.buddies::mail.restore', $arData, function ($message) use ($sUserEmail) {
                 $message->to($sUserEmail);
             });
-        } else if ($bUseQueue && !empty($sQueueName)) {
-            Mail::queueOn($sQueueName, 'lovata.buddies::mail.restore', $arData, function($message) use ($sUserEmail) {
+        } elseif ($bUseQueue && !empty($sQueueName)) {
+            Mail::queueOn($sQueueName, 'lovata.buddies::mail.restore', $arData, function ($message) use ($sUserEmail) {
                 $message->to($sUserEmail);
             });
         } else {
-            Mail::send('lovata.buddies::mail.restore', $arData, function($message) use ($sUserEmail) {
+            Mail::send('lovata.buddies::mail.restore', $arData, function ($message) use ($sUserEmail) {
                 $message->to($sUserEmail);
             });
         }

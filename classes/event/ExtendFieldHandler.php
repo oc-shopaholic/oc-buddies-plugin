@@ -17,7 +17,7 @@ class ExtendFieldHandler
      */
     public function subscribe($obEvent)
     {
-        $obEvent->listen('backend.form.extendFields', function($obWidget) {
+        $obEvent->listen('backend.form.extendFields', function ($obWidget) {
             $this->extendUserFields($obWidget);
         });
     }
@@ -28,7 +28,7 @@ class ExtendFieldHandler
      */
     public function extendUserFields($obWidget)
     {
-        if(!$obWidget->getController() instanceof Users) {
+        if (!$obWidget->getController() instanceof Users) {
             return;
         }
 
@@ -38,55 +38,53 @@ class ExtendFieldHandler
         }
 
         $obPropertyList = Property::active()->orderBy('sort_order', 'asc')->get();
-        if($obPropertyList->isEmpty()) {
+        if ($obPropertyList->isEmpty()) {
             return;
         }
 
         //Get widget data for properties
         $arAdditionPropertyData = [];
         /** @var Property $obProperty */
-        foreach($obPropertyList as $obProperty) {
-
+        foreach ($obPropertyList as $obProperty) {
             $arPropertyData = $obProperty->getWidgetData();
-            if(!empty($arPropertyData)) {
+            if (!empty($arPropertyData)) {
                 $arAdditionPropertyData[Property::NAME.'['.$obProperty->code.']'] = $arPropertyData;
             }
         }
 
         // Add fields
-        if(!empty($arAdditionPropertyData)) {
+        if (!empty($arAdditionPropertyData)) {
             $obWidget->addTabFields($arAdditionPropertyData);
         }
     }
 
     /**
-     * @param \Backend\Widgets\Form $obWidget
+     * @param \Backend\Widgets\Form                        $obWidget
      * @param \October\Rain\Database\Collection|Property[] $obPropertyList
      */
     protected function addPropertyFields($obWidget, $obPropertyList)
     {
-        if($obPropertyList->isEmpty()) {
+        if ($obPropertyList->isEmpty()) {
             return;
         }
-        
+
         //Get widget data for properties
         $arAdditionPropertyData = [];
         /** @var Property $obProperty */
-        foreach($obPropertyList as $obProperty) {
-
+        foreach ($obPropertyList as $obProperty) {
             //Check active property
-            if(!$obProperty->active) {
+            if (!$obProperty->active) {
                 continue;
             }
 
             $arPropertyData = $obProperty->getWidgetData();
-            if(!empty($arPropertyData)) {
+            if (!empty($arPropertyData)) {
                 $arAdditionPropertyData[Property::NAME.'['.$obProperty->id.']'] = $arPropertyData;
             }
         }
 
         // Add fields
-        if(empty($arAdditionPropertyData)) {
+        if (empty($arAdditionPropertyData)) {
             return;
         }
 

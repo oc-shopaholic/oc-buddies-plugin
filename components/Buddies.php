@@ -24,7 +24,7 @@ abstract class Buddies extends ComponentSubmitForm
     {
         return [
             'name'        => 'lovata.buddies::lang.component.buddies',
-            'description' => 'lovata.buddies::lang.component.buddies_desc'
+            'description' => 'lovata.buddies::lang.component.buddies_desc',
         ];
     }
 
@@ -43,7 +43,7 @@ abstract class Buddies extends ComponentSubmitForm
      */
     protected function getRedirectPageProperties()
     {
-        if(empty($this->obUser)) {
+        if (empty($this->obUser)) {
             return [];
         }
 

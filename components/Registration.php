@@ -40,15 +40,15 @@ class Registration extends Buddies
             'title'   => 'lovata.buddies::lang.component.property_activation',
             'type'    => 'dropdown',
             'options' => [
-                self::ACTIVATION_OFF  => Lang::get('lovata.buddies::lang.component.property_' . self::ACTIVATION_OFF),
-                self::ACTIVATION_ON   => Lang::get('lovata.buddies::lang.component.property_' . self::ACTIVATION_ON),
-                self::ACTIVATION_MAIL => Lang::get('lovata.buddies::lang.component.property_' . self::ACTIVATION_MAIL),
-            ]
+                self::ACTIVATION_OFF  => Lang::get('lovata.buddies::lang.component.property_'.self::ACTIVATION_OFF),
+                self::ACTIVATION_ON   => Lang::get('lovata.buddies::lang.component.property_'.self::ACTIVATION_ON),
+                self::ACTIVATION_MAIL => Lang::get('lovata.buddies::lang.component.property_'.self::ACTIVATION_MAIL),
+            ],
         ];
 
         $arResult['force_login'] = [
-            'title'   => 'lovata.buddies::lang.component.property_force_login',
-            'type'    => 'checkbox',
+            'title' => 'lovata.buddies::lang.component.property_force_login',
+            'type'  => 'checkbox',
         ];
 
         return $arResult;
@@ -60,16 +60,17 @@ class Registration extends Buddies
      */
     public function onRun()
     {
-        if($this->sMode != self::MODE_SUBMIT) {
+        if ($this->sMode != self::MODE_SUBMIT) {
             return null;
         }
 
         $arUserData = Input::all();
-        if(empty($arUserData)) {
+        if (empty($arUserData)) {
             return null;
         }
 
         $this->registration($arUserData);
+
         return $this->getResponseModeForm();
     }
 
@@ -88,23 +89,23 @@ class Registration extends Buddies
 
     /**
      * User registration
-     * @param $arUserData
+     * @param array $arUserData
      * @return User|null
      */
     public function registration($arUserData)
     {
-        if(empty($arUserData) || !is_array($arUserData)) {
-
+        if (empty($arUserData) || !is_array($arUserData)) {
             $sMessage = Lang::get('lovata.toolbox::lang.message.e_not_correct_request');
             Result::setMessage($sMessage);
+
             return null;
         }
-        
-        //Check user auth
-        if(!empty($this->obUser)) {
 
+        //Check user auth
+        if (!empty($this->obUser)) {
             $sMessage = Lang::get('lovata.buddies::lang.message.e_auth_fail');
             Result::setMessage($sMessage);
+
             return null;
         }
 
@@ -116,20 +117,21 @@ class Registration extends Buddies
             $obUser = AuthHelper::register($arUserData, $bUserActivate);
         } catch (\October\Rain\Database\ModelException $obException) {
             $this->processValidationError($obException);
+
             return null;
         }
 
-        if(empty($obUser)) {
-
+        if (empty($obUser)) {
             $sMessage = Lang::get('lovata.buddies::lang.message.e_user_create');
             Result::setMessage($sMessage);
+
             return null;
         }
 
         //User activation
         $this->afterRegistrationActivate($obUser);
-        
-        if($this->property('force_login')) {
+
+        if ($this->property('force_login')) {
             AuthHelper::login($obUser);
         }
 
@@ -147,12 +149,12 @@ class Registration extends Buddies
      */
     protected function afterRegistrationActivate(&$obUser)
     {
-        if(empty($obUser)) {
+        if (empty($obUser)) {
             return;
         }
-        
+
         $sActivationType = $this->property('activation');
-        switch($sActivationType) {
+        switch ($sActivationType) {
             case self::ACTIVATION_ON:
                 break;
             case self::ACTIVATION_OFF:
@@ -160,42 +162,43 @@ class Registration extends Buddies
                 $obUser->is_activated = false;
                 break;
             case self::ACTIVATION_MAIL:
-                
+
                 $obUser->activation_code = $obUser->getActivationCode();
                 $obUser->is_activated = false;
-                
+
                 //Get user mail data
                 $arMailData = [
-                    'obUser' => $obUser,
+                    'obUser'   => $obUser,
                     'site_url' => env('SITE_URL'),
                 ];
-                
+
                 $sUserEmail = $obUser->email;
-                
+
                 //Get queue settings
                 $bUseQueue = Settings::getValue('queue_on');
                 $sQueueName = Settings::getValue('queue_name');
-                
+
                 //Send registration mail
-                if($bUseQueue && empty($sQueueName)) {
-                    Mail::queue('lovata.buddies::mail.registration', $arMailData, function($obMessage) use ($sUserEmail) {
+                if ($bUseQueue && empty($sQueueName)) {
+                    Mail::queue('lovata.buddies::mail.registration', $arMailData, function ($obMessage) use ($sUserEmail) {
                         $obMessage->to($sUserEmail);
                     });
-                    
-                } else if ($bUseQueue && !empty($sQueueName)) {
-                    Mail::queueOn($sQueueName, 'lovata.buddies::mail.registration', $arMailData, function($obMessage) use ($sUserEmail) {
+
+                } elseif ($bUseQueue && !empty($sQueueName)) {
+                    Mail::queueOn($sQueueName, 'lovata.buddies::mail.registration', $arMailData, function ($obMessage) use ($sUserEmail) {
                         $obMessage->to($sUserEmail);
                     });
-                    
+
                 } else {
-                    Mail::send('lovata.buddies::mail.registration', $arMailData, function($obMessage) use ($sUserEmail) {
+                    Mail::send('lovata.buddies::mail.registration', $arMailData, function ($obMessage) use ($sUserEmail) {
                         $obMessage->to($sUserEmail);
                     });
                 }
-                
+
                 break;
         }
 
         $obUser->forceSave();
     }
 }
+

@@ -23,7 +23,7 @@ class ChangePassword extends Buddies
     {
         return [
             'name'        => 'lovata.buddies::lang.component.change_password',
-            'description' => 'lovata.buddies::lang.component.change_password_desc'
+            'description' => 'lovata.buddies::lang.component.change_password_desc',
         ];
     }
 
@@ -36,8 +36,8 @@ class ChangePassword extends Buddies
         $arResult = array_merge($arResult, $this->getModeProperty());
 
         $arResult['check_old_password'] = [
-            'title'             => 'lovata.buddies::lang.component.property_check_old_password',
-            'type'              => 'checkbox',
+            'title' => 'lovata.buddies::lang.component.property_check_old_password',
+            'type'  => 'checkbox',
         ];
 
         return $arResult;
@@ -48,23 +48,24 @@ class ChangePassword extends Buddies
      */
     public function onRun()
     {
-        if($this->sMode != self::MODE_SUBMIT) {
+        if ($this->sMode != self::MODE_SUBMIT) {
             return null;
         }
 
         //Get element slug
         $iUserID = $this->property('slug');
-        if(empty($iUserID) || empty($this->obUser) || ($this->obUser->id != $iUserID)) {
+        if (empty($iUserID) || empty($this->obUser) || ($this->obUser->id != $iUserID)) {
             return $this->getErrorResponse();
         }
 
         //Get user data
         $arUserData = Input::all();
-        if(empty($arUserData)) {
+        if (empty($arUserData)) {
             return null;
         }
 
         $this->changePassword($arUserData);
+
         return $this->getResponseModeForm();
     }
 
@@ -75,10 +76,11 @@ class ChangePassword extends Buddies
     public function onAjax()
     {
         $iUserID = $this->property('slug');
-        if(empty($iUserID) || empty($this->obUser) || ($this->obUser->id != $iUserID)) {
+        if (empty($iUserID) || empty($this->obUser) || ($this->obUser->id != $iUserID)) {
 
             $sMessage = Lang::get('lovata.toolbox::lang.message.e_not_correct_request');
             Result::setMessage($sMessage);
+
             return $this->getResponseModeAjax();
         }
 
@@ -97,33 +99,36 @@ class ChangePassword extends Buddies
      */
     public function changePassword($arUserData)
     {
-        if(empty($arUserData) || !is_array($arUserData) || empty($this->obUser)) {
+        if (empty($arUserData) || !is_array($arUserData) || empty($this->obUser)) {
 
             $sMessage = Lang::get('lovata.toolbox::lang.message.e_not_correct_request');
             Result::setMessage($sMessage);
+
             return false;
         }
 
         //Make collection
         $obUserData = Collection::make($arUserData);
 
-        if(empty($obUserData->get('password'))) {
+        if (empty($obUserData->get('password'))) {
 
             $sMessage = Lang::get('system::validation.required',
                 ['attribute' => Lang::get('lovata.toolbox::lang.field.password')]
             );
 
             Result::setFalse(['field' => 'password'])->setMessage($sMessage);
+
             return false;
         }
 
         $bCheckOldPassword = $this->property('check_old_password');
         $sOldPassword = $obUserData->get('old_password');
 
-        if($bCheckOldPassword && !Hash::check($sOldPassword, $this->obUser->password)) {
+        if ($bCheckOldPassword && !Hash::check($sOldPassword, $this->obUser->password)) {
 
             $sMessage = Lang::get('lovata.buddies::lang.message.e_check_old_password');
             Result::setFalse(['field' => 'password'])->setMessage($sMessage);
+
             return false;
         }
 
@@ -133,9 +138,10 @@ class ChangePassword extends Buddies
 
         try {
             $this->obUser->save();
-        } catch (\October\Rain\Database\ModelException $obException) {
+        } catch(\October\Rain\Database\ModelException $obException) {
 
             $this->processValidationError($obException);
+
             return false;
         }
 

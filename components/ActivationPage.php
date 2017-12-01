@@ -20,7 +20,7 @@ class ActivationPage extends ComponentBase
     {
         return [
             'name'        => 'lovata.buddies::lang.component.activation_page',
-            'description' => 'lovata.buddies::lang.component.activation_page_desc'
+            'description' => 'lovata.buddies::lang.component.activation_page_desc',
         ];
     }
 
@@ -30,6 +30,7 @@ class ActivationPage extends ComponentBase
     public function defineProperties()
     {
         $arResult = $this->getElementPageProperties();
+
         return $arResult;
     }
 
@@ -41,19 +42,19 @@ class ActivationPage extends ComponentBase
     {
         //Get activation code
         $sActivationCode = $this->property('slug');
-        if(empty($sActivationCode)) {
+        if (empty($sActivationCode)) {
             return $this->getErrorResponse();
         }
-        
+
         //Get user by activation code
         $obUser = User::getByActivationCode($sActivationCode)->first();
-        if(empty($obUser)) {
+        if (empty($obUser)) {
             return $this->getErrorResponse();
         }
 
         $obUser->activate();
         $obUser->forceSave();
-        
+
         return null;
     }
 }

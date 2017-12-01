@@ -52,9 +52,9 @@ class Plugin extends PluginBase
                 'class'       => 'Lovata\Buddies\Models\Settings',
                 'order'       => 100,
                 'permissions' => [
-                    'buddies-menu-settings'
+                    'buddies-menu-settings',
                 ],
-            ]
+            ],
         ];
     }
 
@@ -77,7 +77,7 @@ class Plugin extends PluginBase
         $obAlias = AliasLoader::getInstance();
         $obAlias->alias('AuthHelper', 'Lovata\Buddies\Facades\AuthHelper');
 
-        App::singleton('auth.helper', function() {
+        App::singleton('auth.helper', function () {
             return AuthHelperManager::instance();
         });
     }

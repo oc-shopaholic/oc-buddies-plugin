@@ -8,10 +8,10 @@ use October\Rain\Auth\Models\User as UserModel;
  * Class User
  * @package Lovata\Buddies\Models
  * @author Andrey Kahranenka, a.khoronenko@lovata.com, LOVATA Group
- * 
+ *
  * @mixin \October\Rain\Database\Builder
  * @mixin \Eloquent
- * 
+ *
  * @property int $id
  * @property bool $is_activated
  * @property string $email
@@ -39,7 +39,7 @@ use October\Rain\Auth\Models\User as UserModel;
  * @property \System\Models\File $avatar
  *
  * @property \Illuminate\Database\Eloquent\Collection|Group[] $groups
- * 
+ *
  * @method static $this active()
  * @method static $this notActive()
  * @method static $this getByActivationCode(string $sActivationCode)
@@ -49,9 +49,9 @@ class User extends UserModel
 {
     use DataFileModel;
     use NameField;
-    
+
     const CACHE_TAG_ELEMENT = 'buddies-user-element';
-    
+
     public $table = 'lovata_buddies_users';
 
     public $rules = [
@@ -86,7 +86,7 @@ class User extends UserModel
     public $appends = ['phone_list'];
 
     public $belongsToMany = [
-        'groups' => [Group::class, 'table' => 'lovata_buddies_users_groups', 'key' => 'user_id']
+        'groups' => [Group::class, 'table' => 'lovata_buddies_users_groups', 'key' => 'user_id'],
     ];
 
     /**
@@ -94,7 +94,7 @@ class User extends UserModel
      */
     public function beforeValidate()
     {
-        if(empty($this->id) && empty($this->password) && empty($this->password_confirmation)) {
+        if (empty($this->id) && empty($this->password) && empty($this->password_confirmation)) {
             $this->password = $this->email;
             $this->password_confirmation = $this->email;
         }
@@ -153,37 +153,38 @@ class User extends UserModel
      * @param User $obQuery
      * @return User;
      */
-    public function scopeNotActive($obQuery) {
+    public function scopeNotActive($obQuery)
+    {
         return $obQuery->where('is_activated', false);
     }
-    
+
     /**
      * Get elements by activation code
-     * @param User $obQuery
+     * @param User   $obQuery
      * @param string $sData
      * @return User;
      */
     public function scopeGetByActivationCode($obQuery, $sData)
     {
-        if(!empty($sData)) {
+        if (!empty($sData)) {
             $obQuery->where('activation_code', $sData);
         }
-        
+
         return $obQuery;
     }
-    
+
     /**
      * Get elements by email
-     * @param User $obQuery
+     * @param User   $obQuery
      * @param string $sData
      * @return User;
      */
     public function scopeGetByEmail($obQuery, $sData)
     {
-        if(!empty($sData)) {
+        if (!empty($sData)) {
             $obQuery->where('email', $sData);
         }
-        
+
         return $obQuery;
     }
 
@@ -193,7 +194,7 @@ class User extends UserModel
      */
     public function getPersistCode()
     {
-        if(empty($this->persist_code)) {
+        if (empty($this->persist_code)) {
             return parent::getPersistCode();
         }
 
@@ -207,26 +208,25 @@ class User extends UserModel
     public function getPhoneListAttribute()
     {
         $sPhone = $this->phone;
-        if(empty($sPhone)) {
+        if (empty($sPhone)) {
             return [];
         }
-        
+
         $arResult = [];
-        
+
         //Explode 'phone' field
         $arPhoneList = explode(',', $sPhone);
-        foreach($arPhoneList as $sPhoneNumber) {
-            
+        foreach ($arPhoneList as $sPhoneNumber) {
             //Trim phone
             $sPhoneNumber = trim($sPhoneNumber);
-            if(empty($sPhoneNumber)) {
+            if (empty($sPhoneNumber)) {
                 continue;
             }
-            
+
             //Add phone to result
             $arResult[] = $sPhoneNumber;
         }
-        
+
         return $arResult;
     }
 
@@ -236,21 +236,21 @@ class User extends UserModel
      */
     public function setPhoneListAttribute($arValue)
     {
-        if(empty($arValue) || !is_array($arValue)) {
+        if (empty($arValue) || !is_array($arValue)) {
             return;
         }
-        
+
         //Prepare phone list
         $arPhoneList = [];
-        foreach($arValue as $sValue) {
+        foreach ($arValue as $sValue) {
             $sValue = trim($sValue);
-            if(empty($sValue)) {
+            if (empty($sValue)) {
                 continue;
             }
-            
+
             $arPhoneList[] = $sValue;
         }
-        
+
         //Save phone list to "phone" field
         $this->phone = implode(',', $arPhoneList);
     }

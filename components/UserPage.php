@@ -18,7 +18,7 @@ use Lovata\Toolbox\Traits\Helpers\TraitComponentNotFoundResponse;
 class UserPage extends Buddies
 {
     use TraitComponentNotFoundResponse;
-    
+
     /** @var null|User */
     protected $obElement = null;
 
@@ -29,7 +29,7 @@ class UserPage extends Buddies
     {
         return [
             'name'        => 'lovata.buddies::lang.component.user_page',
-            'description' => 'lovata.buddies::lang.component.user_page_desc'
+            'description' => 'lovata.buddies::lang.component.user_page_desc',
         ];
     }
 
@@ -41,6 +41,7 @@ class UserPage extends Buddies
     {
         $arProperties = $this->getElementPageProperties();
         $arProperties = array_merge($arProperties, $this->getModeProperty());
+
         return $arProperties;
     }
 
@@ -63,6 +64,7 @@ class UserPage extends Buddies
         }
 
         $this->updateUserData($arUserData);
+
         return null;
     }
 
@@ -87,10 +89,10 @@ class UserPage extends Buddies
      */
     public function updateUserData($arUserData)
     {
-        if(empty($arUserData) || empty($this->obUser)) {
-
+        if (empty($arUserData) || empty($this->obUser)) {
             $sMessage = Lang::get('lovata.toolbox::lang.message.e_not_correct_request');
             Result::setMessage($sMessage);
+
             return false;
         }
 
@@ -99,8 +101,8 @@ class UserPage extends Buddies
             $this->obUser->fill($arUserData);
             $this->obUser->save();
         } catch (\October\Rain\Database\ModelException $obException) {
-
             $this->processValidationError($obException);
+
             return false;
         }
 

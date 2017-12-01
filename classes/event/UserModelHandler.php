@@ -14,7 +14,7 @@ class UserModelHandler extends ModelHandler
 {
     /** @var User */
     protected $obElement;
-    
+
     /**
      * Get model class name
      * @return string

@@ -19,7 +19,7 @@ class Login extends Buddies
     {
         return [
             'name'        => 'lovata.buddies::lang.component.login',
-            'description' => 'lovata.buddies::lang.component.login_desc'
+            'description' => 'lovata.buddies::lang.component.login_desc',
         ];
     }
 
@@ -29,6 +29,7 @@ class Login extends Buddies
     public function defineProperties()
     {
         $arResult = $this->getModeProperty();
+
         return $arResult;
     }
 
@@ -38,16 +39,17 @@ class Login extends Buddies
      */
     public function onRun()
     {
-        if($this->sMode != self::MODE_SUBMIT) {
+        if ($this->sMode != self::MODE_SUBMIT) {
             return null;
         }
 
         $arUserData = Input::all();
-        if(empty($arUserData)) {
+        if (empty($arUserData)) {
             return null;
         }
 
         $this->login($arUserData);
+
         return $this->getResponseModeForm();
     }
 
@@ -73,23 +75,23 @@ class Login extends Buddies
      */
     public function login($arUserData, $bRemember = false)
     {
-        if(empty($arUserData) || !is_array($arUserData)) {
-
+        if (empty($arUserData) || !is_array($arUserData)) {
             $sMessage = Lang::get('lovata.toolbox::lang.message.e_not_correct_request');
             Result::setMessage($sMessage);
+
             return null;
         }
 
         //Check user auth
-        if(!empty($this->obUser)) {
-
+        if (!empty($this->obUser)) {
             $sMessage = Lang::get('lovata.buddies::lang.message.e_auth_fail');
             Result::setMessage($sMessage);
+
             return null;
         }
 
         $this->obUser = AuthHelper::authenticate($arUserData, $bRemember);
-        if(empty($this->obUser)) {
+        if (empty($this->obUser)) {
             return null;
         }
 
@@ -99,3 +101,4 @@ class Login extends Buddies
         return $this->obUser;
     }
 }
+

@@ -12,10 +12,11 @@ class Logout extends Buddies
     /**
      * @return array
      */
-    public function componentDetails() {
+    public function componentDetails()
+    {
         return [
             'name'        => 'lovata.buddies::lang.component.logout',
-            'description' => 'lovata.buddies::lang.component.logout_desc'
+            'description' => 'lovata.buddies::lang.component.logout_desc',
         ];
     }
 
@@ -35,11 +36,11 @@ class Logout extends Buddies
      */
     public function onRun()
     {
-        if($this->sMode != self::MODE_SUBMIT) {
+        if ($this->sMode != self::MODE_SUBMIT) {
             return null;
         }
 
-        if(!empty($this->obUser)) {
+        if (!empty($this->obUser)) {
             AuthHelper::logout();
         }
 
@@ -48,10 +49,11 @@ class Logout extends Buddies
 
     /**
      * Logout (ajax)
+     * @return array|\Illuminate\Http\RedirectResponse
      */
     public function onAjax()
     {
-        if(!empty($this->obUser)) {
+        if (!empty($this->obUser)) {
             AuthHelper::logout();
         }
 

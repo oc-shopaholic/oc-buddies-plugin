@@ -9,7 +9,8 @@ use October\Rain\Database\Model;
  * @package Lovata\Buddies\Models
  * @author Andrey Kharanenka, a.khoronenko@lovata.com, LOVATA Group
  */
-class Settings extends Model {
+class Settings extends Model
+{
 
     const CACHE_TAG = 'buddies-settings';
 
@@ -22,9 +23,9 @@ class Settings extends Model {
      * @param string $sCode
      * @return null|string
      */
-    public static function getValue($sCode) {
-
-        if(empty($sCode)) {
+    public static function getValue($sCode)
+    {
+        if (empty($sCode)) {
             return '';
         }
 
@@ -32,7 +33,7 @@ class Settings extends Model {
 
         //Get value from cache
         $sResult = CCache::get($arTags, $sCode);
-        if(!empty($sResult)) {
+        if (!empty($sResult)) {
             return $sResult;
         }
 
@@ -45,11 +46,16 @@ class Settings extends Model {
         return $sResult;
     }
 
-    public function afterSave() {
-
+    /**
+     * After save method
+     */
+    public function afterSave()
+    {
         //Clear cache data
         $arValue = $this->value;
-        foreach($arValue as $sKey => $sValue) {
+        $arKeyList = array_keys($arValue);
+
+        foreach ($arKeyList as $sKey) {
             CCache::clear([Plugin::CACHE_TAG, self::CACHE_TAG], $sKey);
         }
     }

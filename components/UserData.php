@@ -15,8 +15,8 @@ class UserData extends Buddies
     public function componentDetails()
     {
         return [
-            'name'          => 'lovata.buddies::lang.component.user_data',
-            'description'   => 'lovata.buddies::lang.component.user_data_desc'
+            'name'        => 'lovata.buddies::lang.component.user_data',
+            'description' => 'lovata.buddies::lang.component.user_data_desc',
         ];
     }
 
@@ -26,7 +26,7 @@ class UserData extends Buddies
      */
     public function get()
     {
-        if(empty($this->obUser)) {
+        if (empty($this->obUser)) {
             return null;
         }
 

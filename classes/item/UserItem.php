@@ -18,9 +18,9 @@ use Lovata\Toolbox\Classes\Item\ElementItem;
  * @property string $last_name
  * @property string $middle_name
  * @property string $phone
- * @property array $phone_list
- * @property array $avatar
- * @property array $property
+ * @property array  $phone_list
+ * @property array  $avatar
+ * @property array  $property
  */
 class UserItem extends ElementItem
 {
@@ -34,11 +34,11 @@ class UserItem extends ElementItem
      */
     protected function setElementObject()
     {
-        if(!empty($this->obElement) && ! $this->obElement instanceof User) {
+        if (!empty($this->obElement) && !$this->obElement instanceof User) {
             $this->obElement = null;
         }
 
-        if(!empty($this->obElement) || empty($this->iElementID)) {
+        if (!empty($this->obElement) || empty($this->iElementID)) {
             return;
         }
 
@@ -61,7 +61,7 @@ class UserItem extends ElementItem
      */
     protected function getElementData()
     {
-        if(empty($this->obElement)) {
+        if (empty($this->obElement)) {
             return null;
         }
 
