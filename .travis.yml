@@ -11,7 +11,7 @@ php:
 
 services:
   - mysql
-  
+
 before_install:
   - mysql -e 'CREATE DATABASE test CHARACTER SET utf8 COLLATE utf8_general_ci;'
 
@@ -62,7 +62,7 @@ jobs:
       deploy:
         provider: releases
         api_key:
-          secure: cmTypFHvhnSbM8TbeqYR/SEilpjXFPtlYpvliY0qxgM1os+IGVHFCKSM7Bi9Wb8clqzwIG5dssc8qOomfg7QZ1i5TVHaAdgzGJNTyf20ogQbj1QJkzyMCV9synY0ATHXvwVHWMiGZ6N83HU47SStbi4Jt7GMVzCuPOeH6O0gNQwBs2NVPYxQwSYY1SsYQIUummTFVx8fD5NtD+kFCsvc72xjnqFF7rydzRPgRDYHmSZCmSo6eYdeS/uRSlDxMlxr8PNkOImE7OGDBJLtvJwhlrJXQ14NfAc8tUlwCVgcgitCjz8v33xLDRdPSwXjkx2Ci1jnie77HmvrRt8bRcXH0diwTkH0sNS5C+jrKro8X2wpS3d4YNt1D35qG4oIOJA99N26UZO666ao/AcsqJhJCRA4K0t7sNDY/9v+X7qDAb4tqbfUYV+GB8nA3VHhjyubh6VxJuzsuoiYRbsBA6gcYwe+NKZLdb6M4/zrj+OwXBlSINjyvyIOKsX1CU1EhXMuAPwuLyJhoXHt12Xc/O9DCrxxbd3qNS6TVFtAH1ud4W1WF25QhtqTjK3+LeY8pQqxshQfdbfnwWEV7/6FEuEUmcrjrUbT3AysvAKqYCRI41sdDHERiU9vHBMTRtJ23CZtg+nznVozzeRyNCuzDF+6kDqyehRfEOnJDinPGUbuwKs=
+          secure: KTBVuCmtXnUShtFiKkJtxr1Lhmqu2kcSzmsFI85CVqTkQ8Al/f3HR62iqTuqUDojc2WB429CqTDNsCBwLlo6wwE9SOxM9vK31oJ4VLtCcbo7IugQkhXFm2o5SkHazcpuUWoVTdNt5336bxv3gLiV1otZhD0H7zO9PSqv5chXdrOXn/vT6cO8vr89u+if8cRpHcGisOKqWUZcjOEZg7YlrT1oOhbbIW4py3Tq70rQWgd0iDPIdu1E1cqYpJ1gCehjSqHYtPg/chpgpNysRFAB6obH5xo101IORNefmBZD8qFnnH91aH8A9WKAb9tplHJtkSO9c/nUJegd2SGKu0FHM/0wtcGowvFKYCYEKNGWwARDsJ+8HsOlXOcogIAreBdDPOB2ttoH2YBUsGwo0keYC6WBxCvXyoqeY+7iN6iaVbOXVPlSDFsBgG85cSd82hyb1zlu22FefrzKSWvvtGtD8Iqv5XFQ24rwzNuT+NpjOj/rpjxJ3/QKMLp+7Poh0fDAq8v1yU1Hqb1P7J7kFtVUbHsD6PDVN9ifT5afdzCnhm2Zwi/VGXkux5sJK9BklRGwNBkt/LgLdgnvEhT2/WGIPkK/hzaTjEDx3gYjt5mthWZ1jYahnnLCP4YGo51Pn0XguGCGoK850QgRLz9Kd8aqAgBv53Vym1TjWaDCKtogd7Q=
         file: "$NEW_NAME.zip"
         skip_cleanup: true
         on:
