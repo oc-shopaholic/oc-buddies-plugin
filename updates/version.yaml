@@ -4,3 +4,5 @@
     - table_create_groups.php
     - table_create_throttle.php
     - table_create_users.php
+1.0.1:
+    - '$casts property is replaced with $jsonable property in the User model'

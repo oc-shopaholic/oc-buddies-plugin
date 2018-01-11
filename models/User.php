@@ -80,7 +80,7 @@ class User extends UserModel
 
     public $dates = ['created_at', 'updated_at', 'deleted_at', 'activated_at', 'last_login'];
     public $attachOne = ['avatar' => ['System\Models\File']];
-    public $casts = ['property' => 'array'];
+    public $jsonable = ['property'];
     public $purgeable = ['password_confirmation', 'password_change'];
     protected $hashable = ['password', 'persist_code', 'password_confirmation'];
     public $appends = ['phone_list'];
