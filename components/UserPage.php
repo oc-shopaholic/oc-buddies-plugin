@@ -47,7 +47,8 @@ class UserPage extends Buddies
 
     /**
      * Get element object
-     * @return \Illuminate\Http\Response|null
+     * @throws \October\Rain\Exception\AjaxException
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|null
      */
     public function onRun()
     {
@@ -65,7 +66,7 @@ class UserPage extends Buddies
 
         $this->updateUserData($arUserData);
 
-        return null;
+        return $this->getResponseModeForm();
     }
 
     /**

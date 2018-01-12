@@ -264,4 +264,30 @@ class User extends UserModel
         $this->attributes['phone'] = $sValue;
         $this->phone_short = preg_replace("%[^\d,+]%", '', $sValue);
     }
+
+    /**
+     * Set property attribute, nerge new values with old values
+     * @param array $arValue
+     */
+    protected function setPropertyAttribute($arValue)
+    {
+        if(is_string($arValue)) {
+            $arValue = $this->fromJson($arValue);
+        }
+
+        if(empty($arValue) || !is_array($arValue)) {
+            return;
+        }
+
+        $arPropertyList = $this->property;
+        if(empty($arPropertyList)) {
+            $arPropertyList = [];
+        }
+
+        foreach ($arValue as $sKey => $sValue) {
+            $arPropertyList[$sKey] = $sValue;
+        }
+
+        $this->attributes['property'] = $this->asJson($arPropertyList);
+    }
 }

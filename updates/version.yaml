@@ -6,3 +6,5 @@
     - table_create_users.php
 1.0.1:
     - '$casts property is replaced with $jsonable property in the User model'
+1.1.0:
+    - "Added the ability to edit the user's properties using the UserPage component on different pages and forms. For example, for pages: personal data, company legal data, etc."
