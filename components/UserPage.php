@@ -10,7 +10,7 @@ use Lovata\Toolbox\Traits\Helpers\TraitComponentNotFoundResponse;
 /**
  * Class UserPage
  * @package Lovata\Buddies\Components
- * @author Andrey Kahranenka, a.khoronenko@lovata.com, LOVATA Group
+ * @author Andrey Kharanenka, a.khoronenko@lovata.com, LOVATA Group
  *
  * @mixin Builder
  * @mixin \Eloquent

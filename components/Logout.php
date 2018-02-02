@@ -5,7 +5,7 @@ use Lovata\Buddies\Facades\AuthHelper;
 /**
  * Class Logout
  * @package Lovata\Buddies\Components
- * @author Andrey Kahranenka, a.khoronenko@lovata.com, LOVATA Group
+ * @author Andrey Kharanenka, a.khoronenko@lovata.com, LOVATA Group
  */
 class Logout extends Buddies
 {
