@@ -11,7 +11,7 @@ use Lovata\Buddies\Models\User;
 /**
  * Class RestorePassword
  * @package Lovata\Buddies\Components
- * @author Andrey Kahranenka, a.khoronenko@lovata.com, LOVATA Group
+ * @author Andrey Kharanenka, a.khoronenko@lovata.com, LOVATA Group
  */
 class RestorePassword extends Buddies
 {

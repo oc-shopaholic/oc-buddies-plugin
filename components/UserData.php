@@ -5,7 +5,7 @@ use Lovata\Buddies\Classes\Item\UserItem;
 /**
  * Class UserData
  * @package Lovata\Buddies\Components
- * @author Andrey Kahranenka, a.khoronenko@lovata.com, LOVATA Group
+ * @author Andrey Kharanenka, a.khoronenko@lovata.com, LOVATA Group
  */
 class UserData extends Buddies
 {
