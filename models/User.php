@@ -90,17 +90,6 @@ class User extends UserModel
     ];
 
     /**
-     * Before validate method
-     */
-    public function beforeValidate()
-    {
-        if (empty($this->id) && empty($this->password) && empty($this->password_confirmation)) {
-            $this->password = $this->email;
-            $this->password_confirmation = $this->email;
-        }
-    }
-
-    /**
      * Before delete model method
      */
     public function beforeDelete()
