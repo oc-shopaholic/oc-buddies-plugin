@@ -279,4 +279,17 @@ class User extends UserModel
 
         $this->attributes['property'] = $this->asJson($arPropertyList);
     }
+
+    /**
+     * Set password attribute method
+     * @param string $sValue
+     */
+    public function setPasswordAttribute($sValue)
+    {
+        if ($this->exists && empty($sValue)) {
+            unset($this->attributes['password']);
+        } else {
+            $this->attributes['password'] = $sValue;
+        }
+    }
 }
