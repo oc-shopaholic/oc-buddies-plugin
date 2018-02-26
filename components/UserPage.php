@@ -58,6 +58,10 @@ class UserPage extends Buddies
             return $this->getErrorResponse();
         }
 
+        if ($this->sMode != self::MODE_SUBMIT) {
+            return null;
+        }
+
         // Resolve show data or update
         $arUserData = Input::all();
         if (empty($arUserData)) {
