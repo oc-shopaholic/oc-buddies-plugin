@@ -7,7 +7,7 @@ use October\Rain\Auth\Models\User as UserModel;
 /**
  * Class User
  * @package Lovata\Buddies\Models
- * @author Andrey Kharanenka, a.khoronenko@lovata.com, LOVATA Group
+ * @author Andrey Kahranenka, a.khoronenko@lovata.com, LOVATA Group
  *
  * @mixin \October\Rain\Database\Builder
  * @mixin \Eloquent

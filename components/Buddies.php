@@ -8,7 +8,7 @@ use Lovata\Toolbox\Traits\Helpers\TraitValidationHelper;
 /**
  * Class Buddies
  * @package Lovata\Buddies\Components
- * @author Andrey Kharanenka, a.khoronenko@lovata.com, LOVATA Group
+ * @author Andrey Kahranenka, a.khoronenko@lovata.com, LOVATA Group
  */
 abstract class Buddies extends ComponentSubmitForm
 {

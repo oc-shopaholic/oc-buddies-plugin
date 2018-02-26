@@ -10,7 +10,7 @@ use Lovata\Toolbox\Traits\Helpers\TraitComponentNotFoundResponse;
 /**
  * Class ResetPassword
  * @package Lovata\Buddies\Components
- * @author Andrey Kharanenka, a.khoronenko@lovata.com, LOVATA Group
+ * @author Andrey Kahranenka, a.khoronenko@lovata.com, LOVATA Group
  */
 class ResetPassword extends Buddies
 {

@@ -8,7 +8,7 @@ use October\Rain\Database\Traits\Validation;
 /**
  * Class Group
  * @package Lovata\Buddies\Models
- * @author Andrey Kharanenka, a.khoronenko@lovata.com, LOVATA Group
+ * @author Andrey Kahranenka, a.khoronenko@lovata.com, LOVATA Group
  *
  * @mixin \October\Rain\Database\Builder
  * @mixin \Eloquent
