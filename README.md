@@ -68,6 +68,25 @@ The Registration.getErrorMessage method returns an error message if the form was
 ]
 ```
 
+### onCheckEmail() method
+
+The method adds the ability to check the availability of email
+
+**Example (Send ajax request)**
+```javascript
+
+$.request('Registration::onCheckEmail', {
+    data: {'email': $('input[name="email"]').val()},
+    success: function(data) {
+        if(data.status) {
+            //Email is available
+        } else {
+            //Email is not available
+        }
+    }
+});
+```
+
 # Component "ActivationPage"
   
 **Usage:**

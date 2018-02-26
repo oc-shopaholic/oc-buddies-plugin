@@ -11,7 +11,7 @@ use Lovata\Buddies\Facades\AuthHelper;
 /**
  * Class Registration
  * @package Lovata\Buddies\Components
- * @author Andrey Kahranenka, a.khoronenko@lovata.com, LOVATA Group
+ * @author  Andrey Kahranenka, a.khoronenko@lovata.com, LOVATA Group
  */
 class Registration extends Buddies
 {
@@ -85,6 +85,27 @@ class Registration extends Buddies
         $this->registration($arUserData);
 
         return $this->getResponseModeAjax();
+    }
+
+    /**
+     * Check: email is available
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function onCheckEmail()
+    {
+        //Get user email
+        $sEmail = Input::get('email');
+        if (empty($sEmail)) {
+            return response()->json(Result::get());
+        }
+
+        //Get user by email
+        $obUser = User::getByEmail($sEmail)->first();
+        if (!empty($obUser)) {
+            Result::setFalse();
+        }
+
+        return response()->json(Result::get());
     }
 
     /**
