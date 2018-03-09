@@ -42,25 +42,6 @@ class Plugin extends PluginBase
     /**
      * @return array
      */
-    public function registerSettings()
-    {
-        return [
-            'config' => [
-                'label'       => 'lovata.buddies::lang.plugin.name',
-                'icon'        => 'icon-cogs',
-                'description' => 'lovata.buddies::lang.plugin.description',
-                'class'       => 'Lovata\Buddies\Models\Settings',
-                'order'       => 100,
-                'permissions' => [
-                    'buddies-menu-settings',
-                ],
-            ],
-        ];
-    }
-
-    /**
-     * @return array
-     */
     public function registerMailTemplates()
     {
         return [

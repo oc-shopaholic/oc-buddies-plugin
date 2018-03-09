@@ -4,13 +4,13 @@
         'description'           => 'Users login/registration',
     ],
     'field' => [
-        'name'             => 'Name',
-        'last_name'        => 'Last name',
-        'middle_name'      => 'Middle name',
-        'password_confirm' => 'Confirm password',
-        'password_change'  => 'Change password',
-        'queue_on'         => 'Sending messages from the queue',
-        'queue_name'       => 'The name of the queue for sending the emails',
+        'name'                           => 'Name',
+        'last_name'                      => 'Last name',
+        'middle_name'                    => 'Middle name',
+        'password_confirm'               => 'Confirm password',
+        'password_change'                => 'Change password',
+        'registration_mail_template'     => 'Registration mail template',
+        'restore_password_mail_template' => 'Restore password mail template',
     ],
     'menu' => [
         'main'     => 'Users',
@@ -27,7 +27,6 @@
     ],
     'tab' => [
         'data'          => 'Data',
-        'mail'          => 'Sending emails',
         'permissions'   => 'Manage users',
     ],
     'component' => [
@@ -74,6 +73,8 @@
         'e_auth_fail'                   => 'You are already authorized.',
         'e_user_not_found'              => 'User ":user" not found',
         'e_check_old_password'          => 'Old password entered incorrectly.',
+        'email_is_busy'                 => 'Email :email is busy',
+        'email_is_available'            => 'Email :email is available',
         'registration_success'          => 'You have successfully registered',
         'user_update_success'           => 'Your data was successfully saved',
         'password_change_success'       => 'Password was successfully changed.',
@@ -87,6 +88,5 @@
     'permission' => [
         'user'     => 'Manage users',
         'property' => 'Manage addition properties',
-        'settings' => 'Manage settings',
     ],
 ];

@@ -90,17 +90,6 @@ class User extends UserModel
     ];
 
     /**
-     * Before validate method
-     */
-    public function beforeValidate()
-    {
-        if (empty($this->id) && empty($this->password) && empty($this->password_confirmation)) {
-            $this->password = $this->email;
-            $this->password_confirmation = $this->email;
-        }
-    }
-
-    /**
      * Before delete model method
      */
     public function beforeDelete()
@@ -289,5 +278,18 @@ class User extends UserModel
         }
 
         $this->attributes['property'] = $this->asJson($arPropertyList);
+    }
+
+    /**
+     * Set password attribute method
+     * @param string $sValue
+     */
+    public function setPasswordAttribute($sValue)
+    {
+        if ($this->exists && empty($sValue)) {
+            unset($this->attributes['password']);
+        } else {
+            $this->attributes['password'] = $sValue;
+        }
     }
 }

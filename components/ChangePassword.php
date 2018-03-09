@@ -54,7 +54,10 @@ class ChangePassword extends Buddies
 
         //Get element slug
         $iUserID = $this->property('slug');
-        if (empty($iUserID) || empty($this->obUser) || ($this->obUser->id != $iUserID)) {
+        $bSlugRequired = $this->property('slug_required');
+
+        $bErrorResponse = empty($this->obUser) || ($bSlugRequired && (empty($iUserID) || $this->obUser->id != $iUserID));
+        if ($bErrorResponse) {
             return $this->getErrorResponse();
         }
 
@@ -76,7 +79,10 @@ class ChangePassword extends Buddies
     public function onAjax()
     {
         $iUserID = $this->property('slug');
-        if (empty($iUserID) || empty($this->obUser) || ($this->obUser->id != $iUserID)) {
+        $bSlugRequired = $this->property('slug_required');
+
+        $bErrorResponse = empty($this->obUser) || ($bSlugRequired && (empty($iUserID) || $this->obUser->id != $iUserID));
+        if ($bErrorResponse) {
 
             $sMessage = Lang::get('lovata.toolbox::lang.message.e_not_correct_request');
             Result::setMessage($sMessage);

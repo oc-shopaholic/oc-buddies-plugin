@@ -1,9 +1,7 @@
-## Plugin settings
-    Backend -> Settings -> Buddies:
- 1. **Settings sending of emails**
-    - You can eneble the sending of emails with queue and set name of queue.
-
 ## Component "Registration"
+
+You can choose an email template in the settings.
+
 **Component properties:**
   - Mode (Submit form/Ajax form)
   - Send flash message (only for Ajax mode)
@@ -68,7 +66,43 @@ The Registration.getErrorMessage method returns an error message if the form was
 ]
 ```
 
-# Component "ActivationPage"
+### onCheckEmail() method
+
+The method adds the ability to check the availability of email
+
+**Example (Send ajax request)**
+```javascript
+
+$.request('Registration::onCheckEmail', {
+    data: {'email': $('input[name="email"]').val()},
+    success: function(data) {
+        if(data.status) {
+            //Email is available
+        } else {
+            //Email is not available
+        }
+    }
+});
+```
+
+### Event "lovata.buddies::mail.registration.template.name"
+You can add additional fields in the email template.
+By default, the 'lovata.buddies::mail.registration' template is used.
+To integrate with the Translate plugin, you need to create templates for languages with suffix = language code.
+For example:
+  * 'lovata.buddies::mail.registration' - for default language
+  * 'lovata.buddies::mail.registration_ru' - for language with code 'ru'
+```php
+
+Event::listen('lovata.buddies::mail.registration.template.data', function($obUser) {
+    ...
+    
+    //Return array with addition fields
+    return $arResult;
+});
+```
+
+## Component "ActivationPage"
   
 **Usage:**
 The component is used to activate the user in the activation mode by the link in the sent email.
@@ -82,7 +116,7 @@ slug = ":slug"
 ==
 ```
 
-# Component "Login"
+## Component "Login"
 **Component properties:**
   - Mode (Submit form/Ajax form)
   - Send flash message (only for Ajax mode)
@@ -135,7 +169,7 @@ The Login.getErrorMessage method returns an error message if the form was sent a
 ]
 ```
 
-# Component "Logout"
+## Component "Logout"
 **Component properties:**
   - Mode (Submit form/Ajax form)
   - Enable redirect
@@ -156,7 +190,7 @@ redirect_page = "index"
 ==
 ```
 
-# Component "ChangePassword"
+## Component "ChangePassword"
 **Component properties:**
   - Mode (Submit form/Ajax form)
   - Send flash message (only for Ajax mode)
@@ -209,7 +243,7 @@ The ChangePassword.getErrorMessage method returns an error message if the form w
 ]
 ```
 
-# Component "RestorePassword"
+## Component "RestorePassword"
 **Component properties:**
   - Mode (Submit form/Ajax form)
   - Send flash message (only for Ajax mode)
@@ -253,7 +287,24 @@ The RestorePassword.getErrorMessage method returns an error message if the form 
 ]
 ```
 
-# Component "ResetPassword"
+### Event "lovata.buddies::mail.restore.template.data"
+You can add additional fields in the email template.
+By default, the 'lovata.buddies::mail.restore' template is used.
+To integrate with the Translate plugin, you need to create templates for languages with suffix = language code.
+For example:
+  * 'lovata.buddies::mail.restore' - for default language
+  * 'lovata.buddies::mail.restore_ru' - for language with code 'ru'
+```php
+
+Event::listen('lovata.buddies::mail.restore.template.data', function($obUser) {
+    ...
+    
+    //Return array with addition fields
+    return $arResult;
+});
+```
+
+## Component "ResetPassword"
 **Component properties:**
   - Mode (Submit form/Ajax form)
   - Send flash message (only for Ajax mode)
@@ -369,7 +420,7 @@ The method "get" returns object of UserItem class.
 
 {% if obUser.isNotEmpty %}
 <div>
- {{ obUser.name }} {{ obUser.last_name }}
+    {{ obUser.name }} {{ obUser.last_name }}
 </div>
 {% else %}
 <div>
@@ -378,13 +429,13 @@ The method "get" returns object of UserItem class.
 {% endif %}
 ```
 
-# UserItem class
+## UserItem class
 
 The class allows to work with a cached data array of User model.
 
 The UserItem class is extended from [ElementItem](https://github.com/lovata/oc-toolbox-plugin/wiki/ElementItem) class.
 
-## Field list
+### Field list
   * (int) **id**
   * (string) **email**
   * (string) **name**
