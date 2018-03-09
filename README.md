@@ -87,6 +87,11 @@ $.request('Registration::onCheckEmail', {
 
 ### Event "lovata.buddies::mail.registration.template.name"
 You can add additional fields in the email template.
+By default, the 'lovata.buddies::mail.registration' template is used.
+To integrate with the Translate plugin, you need to create templates for languages with suffix = language code.
+For example:
+  * 'lovata.buddies::mail.registration' - for default language
+  * 'lovata.buddies::mail.registration_ru' - for language with code 'ru'
 ```php
 
 Event::listen('lovata.buddies::mail.registration.template.data', function($obUser) {
@@ -284,6 +289,11 @@ The RestorePassword.getErrorMessage method returns an error message if the form 
 
 ### Event "lovata.buddies::mail.restore.template.data"
 You can add additional fields in the email template.
+By default, the 'lovata.buddies::mail.restore' template is used.
+To integrate with the Translate plugin, you need to create templates for languages with suffix = language code.
+For example:
+  * 'lovata.buddies::mail.restore' - for default language
+  * 'lovata.buddies::mail.restore_ru' - for language with code 'ru'
 ```php
 
 Event::listen('lovata.buddies::mail.restore.template.data', function($obUser) {
