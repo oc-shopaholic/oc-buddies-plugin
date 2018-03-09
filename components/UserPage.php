@@ -53,8 +53,11 @@ class UserPage extends Buddies
     public function onRun()
     {
         //Get element slug
-        $sElementSlug = $this->property('slug');
-        if (empty($sElementSlug) || empty($this->obUser) || ($this->obUser->id != $sElementSlug)) {
+        $iUserID = $this->property('slug');
+        $bSlugRequired = $this->property('slug_required');
+
+        $bErrorResponse = empty($this->obUser) || ($bSlugRequired && (empty($iUserID) || $this->obUser->id != $iUserID));
+        if ($bErrorResponse) {
             return $this->getErrorResponse();
         }
 
@@ -79,6 +82,18 @@ class UserPage extends Buddies
      */
     public function onAjax()
     {
+        $iUserID = $this->property('slug');
+        $bSlugRequired = $this->property('slug_required');
+
+        $bErrorResponse = empty($this->obUser) || ($bSlugRequired && (empty($iUserID) || $this->obUser->id != $iUserID));
+        if ($bErrorResponse) {
+
+            $sMessage = Lang::get('lovata.toolbox::lang.message.e_not_correct_request');
+            Result::setMessage($sMessage);
+
+            return $this->getResponseModeAjax();
+        }
+
         //Get user data
         $arUserData = Input::all();
         $this->updateUserData($arUserData);

@@ -30,6 +30,7 @@ class ActivationPage extends ComponentBase
     public function defineProperties()
     {
         $arResult = $this->getElementPageProperties();
+        unset($arResult['slug_required']);
 
         return $arResult;
     }
