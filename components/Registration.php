@@ -1,11 +1,13 @@
 <?php namespace Lovata\Buddies\Components;
 
 use Lang;
-use Mail;
 use Input;
 use Kharanenka\Helper\Result;
+
+use Lovata\Toolbox\Models\Settings;
+use Lovata\Toolbox\Classes\Helper\SendMailHelper;
+
 use Lovata\Buddies\Models\User;
-use Lovata\Buddies\Models\Settings;
 use Lovata\Buddies\Facades\AuthHelper;
 
 /**
@@ -18,6 +20,9 @@ class Registration extends Buddies
     const ACTIVATION_ON = 'activation_on';
     const ACTIVATION_OFF = 'activation_off';
     const ACTIVATION_MAIL = 'activation_mail';
+
+    const EMAIL_TEMPLATE_NAME_EVENT = 'lovata.buddies::mail.registration.template.name';
+    const EMAIL_TEMPLATE_DATA_EVENT = 'lovata.buddies::mail.registration.template.data';
 
     /**
      * @return array
@@ -89,23 +94,15 @@ class Registration extends Buddies
 
     /**
      * Check: email is available
-     * @return \Illuminate\Http\JsonResponse
+     * @return  array
      */
     public function onCheckEmail()
     {
         //Get user email
         $sEmail = Input::get('email');
-        if (empty($sEmail)) {
-            return response()->json(Result::get());
-        }
+        $this->checkAvailabilityEmail($sEmail);
 
-        //Get user by email
-        $obUser = User::getByEmail($sEmail)->first();
-        if (!empty($obUser)) {
-            Result::setFalse();
-        }
-
-        return response()->json(Result::get());
+        return response(Result::get());
     }
 
     /**
@@ -128,6 +125,14 @@ class Registration extends Buddies
             Result::setMessage($sMessage);
 
             return null;
+        }
+
+        //Check email is busy or available
+        if (isset($arUserData['email'])) {
+            $this->checkAvailabilityEmail($arUserData['email']);
+            if (!Result::status()) {
+                return null;
+            }
         }
 
         $sActivationType = $this->property('activation');
@@ -165,6 +170,29 @@ class Registration extends Buddies
     }
 
     /**
+     * Check: email is available
+     * @param string $sEmail
+     */
+    protected function checkAvailabilityEmail($sEmail)
+    {
+        if (empty($sEmail)) {
+            return;
+        }
+
+        $sMessage = Lang::get('lovata.buddies::lang.message.email_is_available', ['email' => $sEmail]);
+        Result::setMessage($sMessage)->setTrue();
+
+        //Get user by email
+        $obUser = User::getByEmail($sEmail)->first();
+        if (!empty($obUser)) {
+            $sMessage = Lang::get('lovata.buddies::lang.message.email_is_busy', ['email' => $sEmail]);
+            Result::setMessage($sMessage);
+        }
+
+        return;
+    }
+
+    /**
      * Activate user after registration
      * @param User $obUser
      */
@@ -187,34 +215,27 @@ class Registration extends Buddies
                 $obUser->activation_code = $obUser->getActivationCode();
                 $obUser->is_activated = false;
 
-                //Get user mail data
+                //Get mail data
                 $arMailData = [
-                    'obUser'   => $obUser,
-                    'site_url' => env('SITE_URL'),
+                    'user'     => $obUser,
+                    'site_url' => config('app.url'),
                 ];
 
-                $sUserEmail = $obUser->email;
+                $arEventData = [
+                    'user' => $obUser,
+                ];
 
-                //Get queue settings
-                $bUseQueue = Settings::getValue('queue_on');
-                $sQueueName = Settings::getValue('queue_name');
+                $sTemplateName = Settings::getValue('registration_mail_template', 'lovata.buddies::mail.registration');
 
-                //Send registration mail
-                if ($bUseQueue && empty($sQueueName)) {
-                    Mail::queue('lovata.buddies::mail.registration', $arMailData, function ($obMessage) use ($sUserEmail) {
-                        $obMessage->to($sUserEmail);
-                    });
-
-                } elseif ($bUseQueue && !empty($sQueueName)) {
-                    Mail::queueOn($sQueueName, 'lovata.buddies::mail.registration', $arMailData, function ($obMessage) use ($sUserEmail) {
-                        $obMessage->to($sUserEmail);
-                    });
-
-                } else {
-                    Mail::send('lovata.buddies::mail.registration', $arMailData, function ($obMessage) use ($sUserEmail) {
-                        $obMessage->to($sUserEmail);
-                    });
-                }
+                $obSendMailHelper = SendMailHelper::instance();
+                $obSendMailHelper->send(
+                    $sTemplateName,
+                    $obUser->email,
+                    $arMailData,
+                    $arEventData,
+                    self::EMAIL_TEMPLATE_NAME_EVENT,
+                    self::EMAIL_TEMPLATE_DATA_EVENT,
+                    true);
 
                 break;
         }

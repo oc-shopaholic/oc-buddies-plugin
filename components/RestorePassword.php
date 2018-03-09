@@ -1,11 +1,13 @@
 <?php namespace Lovata\Buddies\Components;
 
-use Mail;
 use Lang;
 use Input;
 use Kharanenka\Helper\Result;
 use October\Rain\Support\Collection;
-use Lovata\Buddies\Models\Settings;
+
+use Lovata\Toolbox\Models\Settings;
+use Lovata\Toolbox\Classes\Helper\SendMailHelper;
+
 use Lovata\Buddies\Models\User;
 
 /**
@@ -15,6 +17,9 @@ use Lovata\Buddies\Models\User;
  */
 class RestorePassword extends Buddies
 {
+    const EMAIL_TEMPLATE_NAME_EVENT = 'lovata.buddies::mail.restore.template.name';
+    const EMAIL_TEMPLATE_DATA_EVENT = 'lovata.buddies::mail.restore.template.data';
+
     /**
      * @return array
      */
@@ -118,32 +123,29 @@ class RestorePassword extends Buddies
             return false;
         }
 
-        $arData = [
-            'name'     => $obUser->name,
+        //Get mail data
+        $arMailData = [
+            'user'     => $obUser,
             'code'     => $obUser->getRestoreCode(),
-            'site_url' => env('SITE_URL'),
+            'site_url' => config('app.url'),
         ];
 
-        $sUserEmail = $obUser->email;
+        $arEventData = [
+            'user' => $obUser,
+        ];
 
-        //Get queue settings
-        $bUseQueue = Settings::getValue('queue_on');
-        $sQueueName = Settings::getValue('queue_name');
 
-        //Send restore mail
-        if ($bUseQueue && empty($sQueueName)) {
-            Mail::queue('lovata.buddies::mail.restore', $arData, function ($message) use ($sUserEmail) {
-                $message->to($sUserEmail);
-            });
-        } elseif ($bUseQueue && !empty($sQueueName)) {
-            Mail::queueOn($sQueueName, 'lovata.buddies::mail.restore', $arData, function ($message) use ($sUserEmail) {
-                $message->to($sUserEmail);
-            });
-        } else {
-            Mail::send('lovata.buddies::mail.restore', $arData, function ($message) use ($sUserEmail) {
-                $message->to($sUserEmail);
-            });
-        }
+        $sTemplateName = Settings::getValue('restore_password_mail_template', 'lovata.buddies::mail.restore');
+
+        $obSendMailHelper = SendMailHelper::instance();
+        $obSendMailHelper->send(
+            $sTemplateName,
+            $obUser->email,
+            $arMailData,
+            $arEventData,
+            self::EMAIL_TEMPLATE_NAME_EVENT,
+            self::EMAIL_TEMPLATE_DATA_EVENT,
+            true);
 
         $sMessage = Lang::get('lovata.buddies::lang.message.restore_mail_send_success');
         Result::setMessage($sMessage)->setTrue($obUser->id);

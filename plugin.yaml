@@ -33,7 +33,3 @@ permissions:
         tab: 'lovata.buddies::lang.tab.permissions'
         label: 'lovata.buddies::lang.permission.property'
         order: 100
-    buddies-menu-settings:
-        tab: 'lovata.buddies::lang.tab.permissions'
-        label: 'lovata.buddies::lang.permission.settings'
-        order: 100

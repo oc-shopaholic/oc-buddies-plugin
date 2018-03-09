@@ -102,9 +102,7 @@ class RegistrationTest extends CommonTest
 
         self::assertEquals(false, Result::status(), $this->sMessage);
 
-        $sMessage = Lang::get('system::validation.unique', [
-            'attribute' => Lang::get('lovata.toolbox::lang.field.email'),
-        ]);
+        $sMessage = Lang::get('lovata.buddies::lang.message.email_is_busy', ['email' => 'test1@test.com']);
         self::assertEquals($sMessage, Result::message(), $this->sMessage);
     }
 

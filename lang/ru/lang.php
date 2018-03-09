@@ -4,13 +4,13 @@
         'description'           => 'Авторизация/регистрация пользователей',
     ],
     'field' => [
-        'name'                => 'Имя',
-        'last_name'           => 'Фамилия',
-        'middle_name'         => 'Отчество',
-        'password_confirm'    => 'Повторить пароль',
-        'password_change'     => 'Изменить пароль',
-        'queue_on'            => 'Отправка писем используя Queue',
-        'queue_name'          => 'Название queue для отправки письма',
+        'name'                           => 'Имя',
+        'last_name'                      => 'Фамилия',
+        'middle_name'                    => 'Отчество',
+        'password_confirm'               => 'Повторить пароль',
+        'password_change'                => 'Изменить пароль',
+        'registration_mail_template'     => 'Шаблон письма подтверждения перистрации',
+        'restore_password_mail_template' => 'Шаблон письма восстановления пароля',
     ],
     'menu' => [
         'main'          => 'Пользователи',
@@ -27,7 +27,6 @@
     ],
     'tab' => [
         'data'          => 'Данные',
-        'mail'          => 'Отправка писем',
         'permissions'   => 'Управление пользователями',
     ],
     'component' => [
@@ -74,6 +73,8 @@
         'e_auth_fail'                   => 'Вы уже авторизованы',
         'e_user_not_found'              => 'Пользователь ":user" не найден',
         'e_check_old_password'          => 'Старый пароль введен не верно',
+        'email_is_busy'                 => 'Email :email уже занят',
+        'email_is_available'            => 'Email :email доступен',
         'registration_success'          => 'Вы успешно зарегестировались',
         'password_change_success'       => 'Пароль успешно изменен',
         'login_success'                 => 'Вы успешно авторизовались',
@@ -87,6 +88,5 @@
     'permission' => [
         'user'     => 'Управление пользователями',
         'property' => 'Управление свойствами полозователей',
-        'settings'  => 'Управление настройками плагина',
     ],
 ];
