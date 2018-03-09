@@ -9,6 +9,7 @@ use Lovata\Toolbox\Models\Settings;
 use Lovata\Toolbox\Classes\Helper\SendMailHelper;
 
 use Lovata\Buddies\Models\User;
+use Lovata\Buddies\Classes\Item\UserItem;
 
 /**
  * Class RestorePassword
@@ -17,7 +18,6 @@ use Lovata\Buddies\Models\User;
  */
 class RestorePassword extends Buddies
 {
-    const EMAIL_TEMPLATE_NAME_EVENT = 'lovata.buddies::mail.restore.template.name';
     const EMAIL_TEMPLATE_DATA_EVENT = 'lovata.buddies::mail.restore.template.data';
 
     /**
@@ -125,15 +125,11 @@ class RestorePassword extends Buddies
 
         //Get mail data
         $arMailData = [
-            'user'     => $obUser,
-            'code'     => $obUser->getRestoreCode(),
-            'site_url' => config('app.url'),
+            'user'      => $obUser,
+            'user_item' => UserItem::make($obUser->id, $obUser),
+            'code'      => $obUser->getRestoreCode(),
+            'site_url'  => config('app.url'),
         ];
-
-        $arEventData = [
-            'user' => $obUser,
-        ];
-
 
         $sTemplateName = Settings::getValue('restore_password_mail_template', 'lovata.buddies::mail.restore');
 
@@ -142,8 +138,6 @@ class RestorePassword extends Buddies
             $sTemplateName,
             $obUser->email,
             $arMailData,
-            $arEventData,
-            self::EMAIL_TEMPLATE_NAME_EVENT,
             self::EMAIL_TEMPLATE_DATA_EVENT,
             true);
 

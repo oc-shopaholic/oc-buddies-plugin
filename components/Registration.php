@@ -7,8 +7,9 @@ use Kharanenka\Helper\Result;
 use Lovata\Toolbox\Models\Settings;
 use Lovata\Toolbox\Classes\Helper\SendMailHelper;
 
-use Lovata\Buddies\Models\User;
 use Lovata\Buddies\Facades\AuthHelper;
+use Lovata\Buddies\Models\User;
+use Lovata\Buddies\Classes\Item\UserItem;
 
 /**
  * Class Registration
@@ -21,7 +22,6 @@ class Registration extends Buddies
     const ACTIVATION_OFF = 'activation_off';
     const ACTIVATION_MAIL = 'activation_mail';
 
-    const EMAIL_TEMPLATE_NAME_EVENT = 'lovata.buddies::mail.registration.template.name';
     const EMAIL_TEMPLATE_DATA_EVENT = 'lovata.buddies::mail.registration.template.data';
 
     /**
@@ -217,12 +217,9 @@ class Registration extends Buddies
 
                 //Get mail data
                 $arMailData = [
-                    'user'     => $obUser,
-                    'site_url' => config('app.url'),
-                ];
-
-                $arEventData = [
-                    'user' => $obUser,
+                    'user'      => $obUser,
+                    'user_item' => UserItem::make($obUser->id, $obUser),
+                    'site_url'  => config('app.url'),
                 ];
 
                 $sTemplateName = Settings::getValue('registration_mail_template', 'lovata.buddies::mail.registration');
@@ -232,8 +229,6 @@ class Registration extends Buddies
                     $sTemplateName,
                     $obUser->email,
                     $arMailData,
-                    $arEventData,
-                    self::EMAIL_TEMPLATE_NAME_EVENT,
                     self::EMAIL_TEMPLATE_DATA_EVENT,
                     true);
 
