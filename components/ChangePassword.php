@@ -10,7 +10,7 @@ use Lovata\Toolbox\Traits\Helpers\TraitComponentNotFoundResponse;
 /**
  * Class ChangePassword
  * @package Lovata\Buddies\Components
- * @author Andrey Kahranenka, a.khoronenko@lovata.com, LOVATA Group
+ * @author Andrey Kharanenka, a.khoronenko@lovata.com, LOVATA Group
  */
 class ChangePassword extends Buddies
 {
@@ -62,7 +62,7 @@ class ChangePassword extends Buddies
         }
 
         //Get user data
-        $arUserData = Input::all();
+        $arUserData = Input::only(['old_password', 'password', 'password_confirmation']);
         if (empty($arUserData)) {
             return null;
         }
@@ -85,13 +85,13 @@ class ChangePassword extends Buddies
         if ($bErrorResponse) {
 
             $sMessage = Lang::get('lovata.toolbox::lang.message.e_not_correct_request');
-            Result::setMessage($sMessage);
+            Result::setFalse()->setMessage($sMessage);
 
             return $this->getResponseModeAjax();
         }
 
         //Get user data
-        $arUserData = Input::all();
+        $arUserData = Input::only(['old_password', 'password', 'password_confirmation']);
         $this->changePassword($arUserData);
 
         return $this->getResponseModeAjax();
@@ -108,7 +108,7 @@ class ChangePassword extends Buddies
         if (empty($arUserData) || !is_array($arUserData) || empty($this->obUser)) {
 
             $sMessage = Lang::get('lovata.toolbox::lang.message.e_not_correct_request');
-            Result::setMessage($sMessage);
+            Result::setFalse()->setMessage($sMessage);
 
             return false;
         }

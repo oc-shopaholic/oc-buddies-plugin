@@ -10,10 +10,7 @@ use Lovata\Toolbox\Traits\Helpers\TraitComponentNotFoundResponse;
 /**
  * Class UserPage
  * @package Lovata\Buddies\Components
- * @author Andrey Kahranenka, a.khoronenko@lovata.com, LOVATA Group
- *
- * @mixin Builder
- * @mixin \Eloquent
+ * @author Andrey Kharanenka, a.khoronenko@lovata.com, LOVATA Group
  */
 class UserPage extends Buddies
 {
@@ -89,7 +86,7 @@ class UserPage extends Buddies
         if ($bErrorResponse) {
 
             $sMessage = Lang::get('lovata.toolbox::lang.message.e_not_correct_request');
-            Result::setMessage($sMessage);
+            Result::setFalse()->setMessage($sMessage);
 
             return $this->getResponseModeAjax();
         }
@@ -111,7 +108,7 @@ class UserPage extends Buddies
     {
         if (empty($arUserData) || empty($this->obUser)) {
             $sMessage = Lang::get('lovata.toolbox::lang.message.e_not_correct_request');
-            Result::setMessage($sMessage);
+            Result::setFalse()->setMessage($sMessage);
 
             return false;
         }

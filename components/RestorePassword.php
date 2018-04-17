@@ -14,7 +14,7 @@ use Lovata\Buddies\Classes\Item\UserItem;
 /**
  * Class RestorePassword
  * @package Lovata\Buddies\Components
- * @author Andrey Kahranenka, a.khoronenko@lovata.com, LOVATA Group
+ * @author Andrey Kharanenka, a.khoronenko@lovata.com, LOVATA Group
  */
 class RestorePassword extends Buddies
 {
@@ -51,7 +51,7 @@ class RestorePassword extends Buddies
             return null;
         }
 
-        $arUserData = Input::all();
+        $arUserData = Input::only(['email']);
         if (empty($arUserData)) {
             return null;
         }
@@ -68,7 +68,7 @@ class RestorePassword extends Buddies
     public function onAjax()
     {
         //Get user data
-        $arUserData = Input::all();
+        $arUserData = Input::only(['email']);
         $this->sendRestoreMail($arUserData);
 
         return $this->getResponseModeAjax();
@@ -83,7 +83,7 @@ class RestorePassword extends Buddies
     {
         if (empty($arUserData) || !is_array($arUserData)) {
             $sMessage = Lang::get('lovata.toolbox::lang.message.e_not_correct_request');
-            Result::setMessage($sMessage);
+            Result::setFalse()->setMessage($sMessage);
 
             return false;
         }
@@ -91,7 +91,7 @@ class RestorePassword extends Buddies
         //Check user auth
         if (!empty($this->obUser)) {
             $sMessage = Lang::get('lovata.buddies::lang.message.e_auth_fail');
-            Result::setMessage($sMessage);
+            Result::setFalse()->setMessage($sMessage);
 
             return false;
         }

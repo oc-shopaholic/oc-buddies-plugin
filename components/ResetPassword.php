@@ -10,7 +10,7 @@ use Lovata\Toolbox\Traits\Helpers\TraitComponentNotFoundResponse;
 /**
  * Class ResetPassword
  * @package Lovata\Buddies\Components
- * @author Andrey Kahranenka, a.khoronenko@lovata.com, LOVATA Group
+ * @author Andrey Kharanenka, a.khoronenko@lovata.com, LOVATA Group
  */
 class ResetPassword extends Buddies
 {
@@ -57,7 +57,7 @@ class ResetPassword extends Buddies
         }
 
         //Get user data
-        $arUserData = Input::all();
+        $arUserData = Input::only(['password', 'password_confirmation']);
         if (empty($arUserData)) {
             return null;
         }
@@ -76,13 +76,13 @@ class ResetPassword extends Buddies
         //Check user reset password code from URL
         if (!$this->checkResetCode()) {
             $sMessage = Lang::get('lovata.toolbox::lang.message.e_not_correct_request');
-            Result::setMessage($sMessage);
+            Result::setFalse()->setMessage($sMessage);
 
             return $this->getResponseModeAjax();
         }
 
         //Get user data
-        $arUserData = Input::all();
+        $arUserData = Input::only(['password', 'password_confirmation']);
         $this->resetPassword($arUserData);
 
         return $this->getResponseModeAjax();
@@ -98,7 +98,7 @@ class ResetPassword extends Buddies
     {
         if (empty($arUserData) || !is_array($arUserData) || empty($this->obElement)) {
             $sMessage = Lang::get('lovata.toolbox::lang.message.e_not_correct_request');
-            Result::setMessage($sMessage);
+            Result::setFalse()->setMessage($sMessage);
 
             return false;
         }
@@ -106,7 +106,7 @@ class ResetPassword extends Buddies
         //Check user auth
         if (!empty($this->obUser)) {
             $sMessage = Lang::get('lovata.buddies::lang.message.e_auth_fail');
-            Result::setMessage($sMessage);
+            Result::setFalse()->setMessage($sMessage);
 
             return null;
         }
