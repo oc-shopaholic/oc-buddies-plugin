@@ -37,6 +37,7 @@ before_script:
       php artisan october:up;
       php artisan plugin:install Lovata.Toolbox;
       PROJECTS_DIR=$(pwd);
+      echo $PROJECTS_DIR;
       cd ..;
       mkdir -p ./october/plugins/lovata/buddies;
       mv !(october) october/plugins/lovata/buddies;
