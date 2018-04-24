@@ -36,9 +36,13 @@ before_script:
       sed -i "s/=database/=test/" .env;
       php artisan october:up;
       php artisan plugin:install Lovata.Toolbox;
+      PROJECTS_DIR=$(pwd);
+      mkdir tests/fixtures/plugins/lovata;
       cd ..;
       mkdir -p ./october/plugins/lovata/buddies;
       mv !(october) october/plugins/lovata/buddies;
+      ln -s $PROJECTS_DIR"/plugins/lovata/buddies" $PROJECTS_DIR"/tests/fixtures/plugins/lovata/";
+      ln -s $PROJECTS_DIR"/plugins/lovata/toolbox" $PROJECTS_DIR"/tests/fixtures/plugins/lovata/";
       cd october/plugins/lovata/buddies;
     fi
 

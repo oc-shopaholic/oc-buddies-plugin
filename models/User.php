@@ -4,10 +4,12 @@ use Kharanenka\Scope\NameField;
 use Kharanenka\Helper\DataFileModel;
 use October\Rain\Auth\Models\User as UserModel;
 
+use Lovata\Toolbox\Traits\Helpers\TraitCached;
+
 /**
  * Class User
  * @package Lovata\Buddies\Models
- * @author Andrey Kahranenka, a.khoronenko@lovata.com, LOVATA Group
+ * @author Andrey Kharanenka, a.khoronenko@lovata.com, LOVATA Group
  *
  * @mixin \October\Rain\Database\Builder
  * @mixin \Eloquent
@@ -49,6 +51,7 @@ class User extends UserModel
 {
     use DataFileModel;
     use NameField;
+    use TraitCached;
 
     const CACHE_TAG_ELEMENT = 'buddies-user-element';
 
@@ -75,6 +78,18 @@ class User extends UserModel
         'middle_name',
         'phone',
         'phone_list',
+        'property',
+    ];
+
+    public $cached = [
+        'id',
+        'email',
+        'name',
+        'last_name',
+        'middle_name',
+        'phone',
+        'phone_list',
+        'avatar',
         'property',
     ];
 

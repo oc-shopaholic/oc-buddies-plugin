@@ -53,30 +53,4 @@ class UserItem extends ElementItem
     {
         return [Plugin::CACHE_TAG, self::CACHE_TAG_ELEMENT];
     }
-
-    /**
-     * Set element data from model object
-     *
-     * @return array
-     */
-    protected function getElementData()
-    {
-        if (empty($this->obElement)) {
-            return null;
-        }
-
-        $arResult = [
-            'id'          => $this->obElement->id,
-            'email'       => $this->obElement->email,
-            'name'        => $this->obElement->name,
-            'last_name'   => $this->obElement->last_name,
-            'middle_name' => $this->obElement->middle_name,
-            'phone'       => $this->obElement->phone,
-            'phone_list'  => $this->obElement->phone_list,
-            'avatar'      => $this->obElement->getFileData('avatar'),
-            'property'    => $this->obElement->property,
-        ];
-
-        return $arResult;
-    }
 }

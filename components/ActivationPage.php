@@ -7,7 +7,7 @@ use Lovata\Toolbox\Traits\Helpers\TraitComponentNotFoundResponse;
 /**
  * Class ActivationPage
  * @package Lovata\Buddies\Components
- * @author Andrey Kahranenka, a.khoronenko@lovata.com, LOVATA Group
+ * @author Andrey Kharanenka, a.khoronenko@lovata.com, LOVATA Group
  */
 class ActivationPage extends ComponentBase
 {

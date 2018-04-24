@@ -111,6 +111,7 @@ class ChangePasswordTest extends CommonTest
 
         self::assertEquals(true, $bResult, $this->sMessage);
         self::assertEquals(true, Result::status(), $this->sMessage);
+        self::assertEquals(Lang::get('lovata.buddies::lang.message.password_change_success'), Result::message(), $this->sMessage);
     }
 
     /**
@@ -183,6 +184,10 @@ class ChangePasswordTest extends CommonTest
         //Create new element data
         $arCreateData = $this->arCreateData;
         $this->obElement = User::create($arCreateData);
+
+        $this->obElement = User::find($this->obElement->id);
+        $this->obElement->activate();
+        $this->obElement->save();
 
         $arComponentProperty['slug'] = $this->obElement->id;
         AuthHelper::login($this->obElement);

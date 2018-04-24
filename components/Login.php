@@ -8,7 +8,7 @@ use Kharanenka\Helper\Result;
 /**
  * Class Login
  * @package Lovata\Buddies\Components
- * @author Andrey Kahranenka, a.khoronenko@lovata.com, LOVATA Group
+ * @author Andrey Kharanenka, a.khoronenko@lovata.com, LOVATA Group
  */
 class Login extends Buddies
 {
@@ -43,12 +43,13 @@ class Login extends Buddies
             return null;
         }
 
-        $arUserData = Input::all();
+        $arUserData = Input::only(['email', 'password']);
+        $bRemember = (bool) Input::get('remember_me', false);
         if (empty($arUserData)) {
             return null;
         }
 
-        $this->login($arUserData);
+        $this->login($arUserData, $bRemember);
 
         return $this->getResponseModeForm();
     }
@@ -59,7 +60,7 @@ class Login extends Buddies
      */
     public function onAjax()
     {
-        $arUserData = Input::all();
+        $arUserData = Input::only(['email', 'password']);
         $bRemember = (bool) Input::get('remember_me', false);
 
         $this->login($arUserData, $bRemember);
@@ -77,7 +78,7 @@ class Login extends Buddies
     {
         if (empty($arUserData) || !is_array($arUserData)) {
             $sMessage = Lang::get('lovata.toolbox::lang.message.e_not_correct_request');
-            Result::setMessage($sMessage);
+            Result::setFalse()->setMessage($sMessage);
 
             return null;
         }
@@ -85,7 +86,7 @@ class Login extends Buddies
         //Check user auth
         if (!empty($this->obUser)) {
             $sMessage = Lang::get('lovata.buddies::lang.message.e_auth_fail');
-            Result::setMessage($sMessage);
+            Result::setFalse()->setMessage($sMessage);
 
             return null;
         }
