@@ -88,6 +88,9 @@ class AuthHelperManager extends AuthManager
     {
         $this->user = $obUser;
 
+        //Fire the 'beforeLogin' event
+        $this->user->beforeLogin();
+
         //Create session/cookie data to persist the session
         $toPersist = [$obUser->getKey(), $obUser->getPersistCode()];
         Session::put($this->sessionKey, $toPersist);
@@ -97,7 +100,18 @@ class AuthHelperManager extends AuthManager
         }
 
         //Fire the 'afterLogin' event
-        $obUser->afterLogin();
+        $this->user->afterLogin();
+    }
+
+
+    /**
+     * Logs the current user out.
+     */
+    public function logout()
+    {
+        $this->requireActivation = false;
+        parent::logout();
+        $this->requireActivation = true;
     }
 
     /**

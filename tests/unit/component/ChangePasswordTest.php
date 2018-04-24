@@ -185,6 +185,10 @@ class ChangePasswordTest extends CommonTest
         $arCreateData = $this->arCreateData;
         $this->obElement = User::create($arCreateData);
 
+        $this->obElement = User::find($this->obElement->id);
+        $this->obElement->activate();
+        $this->obElement->save();
+
         $arComponentProperty['slug'] = $this->obElement->id;
         AuthHelper::login($this->obElement);
 
