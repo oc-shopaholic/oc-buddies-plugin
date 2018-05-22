@@ -204,7 +204,7 @@ class AuthHelperManager extends AuthManager
      * @param bool  $bActive
      * @return User
      */
-    public function register(array $arCredentials, $bActive = false)
+    public function register(array $arCredentials, $bActive = false, $autoLogin = true)
     {
         /** @var User $obUser */
         $obUser = $this->createUserModel();
@@ -219,8 +219,12 @@ class AuthHelperManager extends AuthManager
         // Prevents revalidation of the password field
         // on subsequent saves to this model object
         $obUser->password = null;
-
-        return $this->user = $obUser;
+        
+        if ($autoLogin) {
+            $this->user = $obUser;
+        }
+        
+        return $obUser;
     }
 
     /**
