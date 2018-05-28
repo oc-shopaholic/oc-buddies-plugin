@@ -9,7 +9,7 @@
         'middle_name'                    => 'Отчество',
         'password_confirm'               => 'Повторить пароль',
         'password_change'                => 'Изменить пароль',
-        'registration_mail_template'     => 'Шаблон письма подтверждения перистрации',
+        'registration_mail_template'     => 'Шаблон письма подтверждения регистрации',
         'restore_password_mail_template' => 'Шаблон письма восстановления пароля',
     ],
     'menu' => [
