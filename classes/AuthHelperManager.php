@@ -134,6 +134,42 @@ class AuthHelperManager extends AuthManager
     }
 
     /**
+     * Find a throttle record by user id and ip address
+     *
+     * @param integer $iUserID
+     * @param string $ipAddress
+     * @return Throttle
+     */
+    public function findThrottleByUserId($iUserID, $ipAddress = null)
+    {
+        $obQuery = Throttle::getByUser($iUserID);
+
+        if ($ipAddress) {
+            $obQuery->where(function($obQuery) use ($ipAddress) {
+                /** @var Throttle $obQuery */
+                $obQuery->where('ip_address', '=', $ipAddress);
+                $obQuery->orWhere('ip_address', '=', null);
+            });
+        }
+
+        $obThrottle = $obQuery->first();
+        if (!empty($obThrottle)) {
+            return $obThrottle;
+        }
+
+        /** @var Throttle $obThrottle */
+        $obThrottle = $this->createThrottleModel();
+        $obThrottle->user_id = $iUserID;
+        if ($ipAddress) {
+            $obThrottle->ip_address = $ipAddress;
+        }
+
+        $obThrottle->save();
+
+        return $obThrottle;
+    }
+
+    /**
      * Finds a user by the login value.
      * @param string $sLogin
      *
@@ -144,6 +180,8 @@ class AuthHelperManager extends AuthManager
         $obModel = $this->createUserModel();
         $obQuery = $obModel->newQuery();
         $this->extendUserQuery($obQuery);
+
+        /** @var User $obUser */
         $obUser = $obQuery->where($obModel->getLoginName(), $sLogin)->first();
 
         return $obUser;
@@ -202,9 +240,10 @@ class AuthHelperManager extends AuthManager
      *
      * @param array $arCredentials
      * @param bool  $bActive
+     * @param bool  $bAutoLogin
      * @return User
      */
-    public function register(array $arCredentials, $bActive = false, $autoLogin = true)
+    public function register(array $arCredentials, $bActive = false, $bAutoLogin = false)
     {
         /** @var User $obUser */
         $obUser = $this->createUserModel();
@@ -220,7 +259,7 @@ class AuthHelperManager extends AuthManager
         // on subsequent saves to this model object
         $obUser->password = null;
         
-        if ($autoLogin) {
+        if ($bAutoLogin) {
             $this->user = $obUser;
         }
         
