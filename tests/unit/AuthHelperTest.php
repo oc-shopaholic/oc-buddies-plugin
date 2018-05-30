@@ -131,6 +131,10 @@ class AuthHelperTest extends CommonTest
         self::assertEquals(false, Result::status(), $sMessage);
         $sMessage = Lang::get('lovata.buddies::lang.message.e_user_suspended', ['user' => $this->obElement->getLogin()]);
         self::assertEquals($sMessage, Result::message(), $sMessage);
+
+        $obThrottle = AuthHelper::findThrottleByUserId($this->obElement->id);
+        $obThrottle->unsuspend();
+        $obThrottle->unban();
     }
 
     /**
