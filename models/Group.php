@@ -28,7 +28,7 @@ class Group extends GroupBase
     use NameField;
     use CodeField;
 
-    protected $table = 'lovata_buddies_groups';
+    public $table = 'lovata_buddies_groups';
 
     /**
      * Validation rules

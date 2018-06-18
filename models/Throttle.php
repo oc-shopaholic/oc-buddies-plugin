@@ -30,7 +30,7 @@ class Throttle extends ThrottleBase
 {
     use UserBelongsTo;
 
-    protected $table = 'lovata_buddies_throttle';
+    public $table = 'lovata_buddies_throttle';
     public $belongsTo = [
         'user' => [User::class]
     ];

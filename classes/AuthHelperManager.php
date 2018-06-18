@@ -291,7 +291,7 @@ class AuthHelperManager extends AuthManager
      */
     protected function validationLoginData()
     {
-        //Check login filed
+        //Check login field
         if (empty($this->sEmail)) {
             $sMessage = Lang::get(
                 'system::validation.required',

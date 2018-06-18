@@ -70,7 +70,7 @@ class ExtendFieldHandler
      */
     public function extendUserFields($obWidget)
     {
-        if (!$obWidget->getController() instanceof Users) {
+        if (!$obWidget->getController() instanceof Users || $obWidget->isNested) {
             return;
         }
 

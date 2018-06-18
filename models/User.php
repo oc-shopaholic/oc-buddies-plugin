@@ -5,6 +5,7 @@ use Kharanenka\Helper\DataFileModel;
 use October\Rain\Auth\Models\User as UserModel;
 
 use Lovata\Toolbox\Traits\Helpers\TraitCached;
+use Lovata\Toolbox\Traits\Models\SetPropertyAttributeTrait;
 
 /**
  * Class User
@@ -40,18 +41,24 @@ use Lovata\Toolbox\Traits\Helpers\TraitCached;
  *
  * @property \System\Models\File $avatar
  *
- * @property \Illuminate\Database\Eloquent\Collection|Group[] $groups
+ * @property  \October\Rain\Database\Collection|Group[] $groups
  *
  * @method static $this active()
  * @method static $this notActive()
  * @method static $this getByActivationCode(string $sActivationCode)
  * @method static $this getByEmail(string $sEmail)
+ *
+ * Orders for Shopaholic plugin
+ * @property \Lovata\OrdersShopaholic\Models\Order[]|\October\Rain\Database\Collection $order
+ * @method static \October\Rain\Database\Relations\HasMany|\Lovata\OrdersShopaholic\Models\Order order()
+ * @property \Lovata\OrdersShopaholic\Classes\Collection\OrderCollection|\Lovata\OrdersShopaholic\Classes\Item\OrderItem $order_list
  */
 class User extends UserModel
 {
     use DataFileModel;
     use NameField;
     use TraitCached;
+    use SetPropertyAttributeTrait;
 
     const CACHE_TAG_ELEMENT = 'buddies-user-element';
 
@@ -267,32 +274,6 @@ class User extends UserModel
     {
         $this->attributes['phone'] = $sValue;
         $this->phone_short = preg_replace("%[^\d,+]%", '', $sValue);
-    }
-
-    /**
-     * Set property attribute, nerge new values with old values
-     * @param array $arValue
-     */
-    protected function setPropertyAttribute($arValue)
-    {
-        if(is_string($arValue)) {
-            $arValue = $this->fromJson($arValue);
-        }
-
-        if(empty($arValue) || !is_array($arValue)) {
-            return;
-        }
-
-        $arPropertyList = $this->property;
-        if(empty($arPropertyList)) {
-            $arPropertyList = [];
-        }
-
-        foreach ($arValue as $sKey => $sValue) {
-            $arPropertyList[$sKey] = $sValue;
-        }
-
-        $this->attributes['property'] = $this->asJson($arPropertyList);
     }
 
     /**
