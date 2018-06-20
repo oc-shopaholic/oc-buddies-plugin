@@ -16,8 +16,6 @@ use System\Classes\PluginBase;
  */
 class Plugin extends PluginBase
 {
-    const CACHE_TAG = 'buddies';
-
     /** @var array Plugin dependencies */
     public $require = ['Lovata.Toolbox'];
 

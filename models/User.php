@@ -60,8 +60,6 @@ class User extends UserModel
     use TraitCached;
     use SetPropertyAttributeTrait;
 
-    const CACHE_TAG_ELEMENT = 'buddies-user-element';
-
     public $table = 'lovata_buddies_users';
 
     public $rules = [
