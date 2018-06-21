@@ -7,6 +7,8 @@ columns:
     is_activated:
         label: 'lovata.toolbox::lang.field.active'
         type: switch
+        searchable: false
+        sortable: true
     name:
         label: 'lovata.buddies::lang.field.name'
         type: text

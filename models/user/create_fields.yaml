@@ -8,49 +8,41 @@ tabs:
             tab: 'lovata.buddies::lang.tab.data'
         name:
             label: 'lovata.buddies::lang.field.name'
-            oc.commentPosition: ''
             span: left
             type: text
             tab: 'lovata.buddies::lang.tab.data'
         last_name:
             label: 'lovata.buddies::lang.field.last_name'
-            oc.commentPosition: ''
             span: left
             type: text
             tab: 'lovata.buddies::lang.tab.data'
         middle_name:
             label: 'lovata.buddies::lang.field.middle_name'
-            oc.commentPosition: ''
             span: left
             type: text
             tab: 'lovata.buddies::lang.tab.data'
         email:
             label: 'lovata.toolbox::lang.field.email'
-            oc.commentPosition: ''
             span: left
             type: text
             tab: 'lovata.buddies::lang.tab.data'
         phone:
             label: 'lovata.toolbox::lang.field.phone'
-            oc.commentPosition: ''
             span: left
             type: text
             tab: 'lovata.buddies::lang.tab.data'
         password:
             label: 'lovata.toolbox::lang.field.password'
-            oc.commentPosition: ''
             span: left
             type: password
             tab: 'lovata.buddies::lang.tab.data'
         password_confirmation:
             label: 'lovata.buddies::lang.field.password_confirm'
-            oc.commentPosition: ''
             span: left
             type: password
             tab: 'lovata.buddies::lang.tab.data'
         avatar:
             label: 'lovata.toolbox::lang.field.image'
-            oc.commentPosition: ''
             mode: image
             useCaption: true
             thumbOptions:

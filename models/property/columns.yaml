@@ -7,6 +7,8 @@ columns:
     active:
         label: 'lovata.toolbox::lang.field.active'
         type: switch
+        searchable: false
+        sortable: true
     code:
         label: 'lovata.toolbox::lang.field.code'
         type: text
@@ -15,6 +17,8 @@ columns:
     type:
         label: 'lovata.toolbox::lang.field.type'
         type: text
+        searchable: false
+        sortable: true
     id:
         label: 'lovata.toolbox::lang.field.id'
         type: number
@@ -24,6 +28,7 @@ columns:
     sort_order:
         label: 'lovata.toolbox::lang.field.sort_order'
         type: number
+        searchable: false
         sortable: true
         width: 150px
     created_at:
