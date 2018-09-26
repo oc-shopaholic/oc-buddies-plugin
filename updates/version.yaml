@@ -18,3 +18,5 @@
     - 'Adds flag to avoid auto logging in newly registered users. Fixes'
 1.4.0:
     - 'Refactoring UserItem class. Add annotations for integration with "Orders for Shopaholic" plugin. Refactoring fields and columns files. Requires Toolbox plugin version 1.10.0 and later.'
+1.4.1:
+    - 'Add possibility to extend query from user model while finding user by credentials'
