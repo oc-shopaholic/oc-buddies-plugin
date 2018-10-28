@@ -215,6 +215,9 @@ class AuthHelperManager extends AuthManager
                 $arHashedCredentials = array_merge($arHashedCredentials, [$sCredential => $sValue]);
             } else {
                 $obQuery = $obQuery->where($sCredential, '=', $sValue);
+                if ($obModel->methodExists('scopeExtendLoginQuery')) {
+                    $obQuery = $obQuery->extendLoginQuery($sCredential, $sValue);
+                }
             }
         }
 
