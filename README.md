@@ -640,3 +640,17 @@ The UserItem class is extended from [ElementItem](https://github.com/lovata/oc-t
   * (array) **phone_list**
   * (array) **property**
   * (array) **avatar** - array with file list ([see](https://github.com/kharanenka/oc-data-file-model)).
+  
+## Extending of login query
+
+```php
+User::extend(function ($obUser) {
+        $obUser->addDynamicMethod('scopeExtendLoginQuery', function ($query, $credential, $value) use ($obUser) {
+            if ($credential == 'email') {
+                $query = $query->orWhere('login', $value);
+            }
+
+            return $query;
+        });
+    });
+```
