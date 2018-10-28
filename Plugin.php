@@ -27,6 +27,7 @@ class Plugin extends PluginBase
         return [
             '\Lovata\Buddies\Components\Registration'    => 'Registration',
             '\Lovata\Buddies\Components\Login'           => 'Login',
+            '\Lovata\Buddies\Components\SocialiteLogin'  => 'SocialiteLogin',
             '\Lovata\Buddies\Components\Logout'          => 'Logout',
             '\Lovata\Buddies\Components\ChangePassword'  => 'ChangePassword',
             '\Lovata\Buddies\Components\RestorePassword' => 'RestorePassword',

@@ -1,8 +1,13 @@
 <?php namespace Lovata\Buddies\Components;
 
+use Redirect;
+use Cms\Classes\Page;
 use Cms\Classes\ComponentBase;
-use Lovata\Buddies\Models\User;
+use Lovata\Toolbox\Classes\Helper\PageHelper;
 use Lovata\Toolbox\Traits\Helpers\TraitComponentNotFoundResponse;
+
+use Lovata\Buddies\Models\User;
+use Lovata\Buddies\Facades\AuthHelper;
 
 /**
  * Class ActivationPage
@@ -12,6 +17,9 @@ use Lovata\Toolbox\Traits\Helpers\TraitComponentNotFoundResponse;
 class ActivationPage extends ComponentBase
 {
     use TraitComponentNotFoundResponse;
+
+    /** @var Buddies */
+    protected $obUser;
 
     /**
      * @return array
@@ -29,15 +37,43 @@ class ActivationPage extends ComponentBase
      */
     public function defineProperties()
     {
-        $arResult = $this->getElementPageProperties();
-        unset($arResult['slug_required']);
+        $arResult = [
+            'slug'          => [
+                'title'   => 'lovata.toolbox::lang.component.property_slug',
+                'type'    => 'string',
+                'default' => '{{ :slug }}',
+            ],
+            'force_login' => [
+                'title' => 'lovata.buddies::lang.component.property_force_login',
+                'type'  => 'checkbox',
+            ],
+            'redirect_on' => [
+                'title' => 'lovata.toolbox::lang.component.property_redirect_on',
+                'type'  => 'checkbox',
+            ],
+        ];
+
+        try {
+            $arPageList = Page::getNameList();
+        } catch (\Exception $obException) {
+            $arPageList = [];
+        }
+
+        if (!empty($arPageList)) {
+            $arResult['redirect_page'] = [
+                'title'             => 'lovata.toolbox::lang.component.property_redirect_page',
+                'type'              => 'dropdown',
+                'options'           => $arPageList,
+            ];
+        }
 
         return $arResult;
     }
 
     /**
      * Get element object
-     * @return \Illuminate\Http\Response|null
+     * @return \Illuminate\Http\Response|null|\Illuminate\Http\RedirectResponse
+     * @throws \October\Rain\Exception\AjaxException
      */
     public function onRun()
     {
@@ -48,14 +84,36 @@ class ActivationPage extends ComponentBase
         }
 
         //Get user by activation code
-        $obUser = User::getByActivationCode($sActivationCode)->first();
-        if (empty($obUser)) {
+        $this->obUser = User::getByActivationCode($sActivationCode)->first();
+        if (empty($this->obUser)) {
             return $this->getErrorResponse();
         }
 
-        $obUser->activate();
-        $obUser->forceSave();
+        $this->obUser->activate();
+        $this->obUser->forceSave();
 
-        return null;
+        if ($this->property('force_login')) {
+            AuthHelper::login($this->obUser);
+        }
+
+        $bRedirectOn = $this->property('redirect_on');
+        $sRedirectPage = $this->property('redirect_page');
+        if (!$bRedirectOn) {
+            return null;
+        }
+
+        if (empty($sRedirectPage)) {
+            return Redirect::to('/');
+        }
+
+        $arPagePropertyList = [];
+        $arPropertyList = PageHelper::instance()->getUrlParamList($sRedirectPage, 'UserPage');
+        if (!empty($arPropertyList)) {
+            $arPagePropertyList[array_shift($arPropertyList)] = $this->obUser->id;
+        }
+
+        $sRedirectURL = Page::url($sRedirectPage, $arPagePropertyList);
+
+        return Redirect::to($sRedirectURL);
     }
 }

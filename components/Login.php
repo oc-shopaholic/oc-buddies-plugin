@@ -85,10 +85,7 @@ class Login extends Buddies
 
         //Check user auth
         if (!empty($this->obUser)) {
-            $sMessage = Lang::get('lovata.buddies::lang.message.e_auth_fail');
-            Result::setFalse()->setMessage($sMessage);
-
-            return null;
+            return $this->obUser;
         }
 
         $this->obUser = AuthHelper::authenticate($arUserData, $bRemember);
@@ -100,6 +97,20 @@ class Login extends Buddies
         Result::setMessage($sMessage)->setTrue($this->obUser->id);
 
         return $this->obUser;
+    }
+
+    /**
+     * Redirect to social login page
+     * @return \Illuminate\Http\RedirectResponse|null
+     */
+    public function onSocialiteLogin()
+    {
+        $sDriverCode = Input::get('driver');
+        if (empty($sDriverCode) || !class_exists(\Laravel\Socialite\Facades\Socialite::class)) {
+            return null;
+        }
+
+        return \Laravel\Socialite\Facades\Socialite::driver($sDriverCode)->redirect();
     }
 }
 
