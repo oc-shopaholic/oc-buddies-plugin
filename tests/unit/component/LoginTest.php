@@ -74,10 +74,9 @@ class LoginTest extends CommonTest
 
         $obUser = $this->obComponent->login($arRequestData);
 
-        self::assertEquals(null, $obUser, $this->sMessage);
+        self::assertEquals($this->obElement, $obUser, $this->sMessage);
 
         self::assertEquals(false, Result::status(), $this->sMessage);
-        self::assertEquals(Lang::get('lovata.buddies::lang.message.e_auth_fail'), Result::message(), $this->sMessage);
 
         AuthHelper::logout();
         $this->obComponent->init();
