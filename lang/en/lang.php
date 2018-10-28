@@ -35,6 +35,8 @@
 
         'login'                         => 'Login',
         'login_desc'                    => '',
+        'socialite_login'               => 'Socialite login',
+        'socialite_login_desc'          => '',
         'logout'                        => 'Logout',
         'logout_desc'                   => '',
 
@@ -62,7 +64,8 @@
         'property_activation_off'               => 'OFF',
         'property_activation_mail'              => 'Send activation email',
         'property_check_old_password'           => 'Check old password',
-
+        'property_socialite_code'               => 'Socialite code',
+        'property_login_page'                   => 'Redirect to login page if user is not authorized',
     ],
     'message' => [
         'e_user_create'                 => 'Error creating user',

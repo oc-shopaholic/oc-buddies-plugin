@@ -2,9 +2,10 @@
 
 use Lang;
 use Input;
+use Redirect;
+use Cms\Classes\Page;
 use Kharanenka\Helper\Result;
 use Lovata\Buddies\Models\User;
-use October\Rain\Database\Builder;
 use Lovata\Toolbox\Traits\Helpers\TraitComponentNotFoundResponse;
 
 /**
@@ -15,6 +16,8 @@ use Lovata\Toolbox\Traits\Helpers\TraitComponentNotFoundResponse;
 class UserPage extends Buddies
 {
     use TraitComponentNotFoundResponse;
+
+    const LOGIN_PAGE = 'login_page';
 
     /** @var null|User */
     protected $obElement = null;
@@ -39,6 +42,20 @@ class UserPage extends Buddies
         $arProperties = $this->getElementPageProperties();
         $arProperties = array_merge($arProperties, $this->getModeProperty());
 
+        try {
+            $arPageList = Page::getNameList();
+        } catch (\Exception $obException) {
+            $arPageList = [];
+        }
+
+        if (!empty($arPageList)) {
+            $arProperties[self::LOGIN_PAGE] = [
+                'title'             => 'lovata.buddies::lang.component.property_login_page',
+                'type'              => 'dropdown',
+                'options'           => $arPageList,
+            ];
+        }
+
         return $arProperties;
     }
 
@@ -49,6 +66,10 @@ class UserPage extends Buddies
      */
     public function onRun()
     {
+        if (empty($this->obUser)) {
+            return $this->redirectToLoginPage();
+        }
+
         //Get element slug
         $iUserID = $this->property('slug');
         $bSlugRequired = $this->property('slug_required');
@@ -91,6 +112,10 @@ class UserPage extends Buddies
             return $this->getResponseModeAjax();
         }
 
+        if (empty($this->obUser)) {
+            return $this->redirectToLoginPage();
+        }
+
         //Get user data
         $arUserData = Input::all();
         $this->updateUserData($arUserData);
@@ -127,5 +152,21 @@ class UserPage extends Buddies
         Result::setMessage($sMessage)->setTrue($this->obUser->id);
 
         return true;
+    }
+
+    /**
+     * Redirect to login page, if user not authorized
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    protected function redirectToLoginPage()
+    {
+        $sRedirectPage = $this->property(self::LOGIN_PAGE);
+        if (empty($sRedirectPage)) {
+            return Redirect::to('/');
+        }
+
+        $sRedirectURL = Page::url($sRedirectPage);
+
+        return Redirect::to($sRedirectURL);
     }
 }

@@ -43,6 +43,9 @@ use Lovata\Toolbox\Traits\Models\SetPropertyAttributeTrait;
  *
  * @property  \October\Rain\Database\Collection|Group[] $groups
  *
+ * @property  \October\Rain\Database\Collection|SocialiteToken[] $socialite_token
+ * @method static \October\Rain\Database\Relations\HasMany|SocialiteToken socialite_token()
+ *
  * @method static $this active()
  * @method static $this notActive()
  * @method static $this getByActivationCode(string $sActivationCode)
@@ -51,7 +54,10 @@ use Lovata\Toolbox\Traits\Models\SetPropertyAttributeTrait;
  * Orders for Shopaholic plugin
  * @property \Lovata\OrdersShopaholic\Models\Order[]|\October\Rain\Database\Collection $order
  * @method static \October\Rain\Database\Relations\HasMany|\Lovata\OrdersShopaholic\Models\Order order()
- * @property \Lovata\OrdersShopaholic\Classes\Collection\OrderCollection|\Lovata\OrdersShopaholic\Classes\Item\OrderItem $order_list
+ * @property \Lovata\OrdersShopaholic\Classes\Collection\OrderCollection|\Lovata\OrdersShopaholic\Classes\Item\OrderItem[] $order_list
+ * @property \Lovata\OrdersShopaholic\Models\UserAddress[]|\October\Rain\Database\Collection $address
+ * @method static \October\Rain\Database\Relations\HasMany|\Lovata\OrdersShopaholic\Models\UserAddress address()
+ * @property \Lovata\OrdersShopaholic\Classes\Collection\UserAddressCollection|\Lovata\OrdersShopaholic\Classes\Item\UserAddressItem[] $address_list
  */
 class User extends UserModel
 {
@@ -109,6 +115,10 @@ class User extends UserModel
         'groups' => [Group::class, 'table' => 'lovata_buddies_users_groups', 'key' => 'user_id'],
     ];
 
+    public $hasMany = [
+        'socialite_token' => [SocialiteToken::class],
+    ];
+
     /**
      * Before delete model method
      */
@@ -117,6 +127,8 @@ class User extends UserModel
         $sTime = str_replace('.', '', microtime(true));
         $this->email = 'removed'.$sTime.'@removed.del';
         $this->save();
+
+        $this->socialite_token()->delete();
     }
 
     /**

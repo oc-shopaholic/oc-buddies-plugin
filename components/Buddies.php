@@ -2,6 +2,7 @@
 
 use Lovata\Buddies\Models\User;
 use Lovata\Buddies\Facades\AuthHelper;
+use Lovata\Toolbox\Classes\Helper\PageHelper;
 use Lovata\Toolbox\Classes\Component\ComponentSubmitForm;
 use Lovata\Toolbox\Traits\Helpers\TraitValidationHelper;
 
@@ -47,6 +48,17 @@ abstract class Buddies extends ComponentSubmitForm
             return [];
         }
 
-        return ['id' => $this->obUser->id];
+        $sRedirectPage = $this->property(self::PROPERTY_REDIRECT_PAGE);
+        if (empty($sRedirectPage)) {
+            return [];
+        }
+
+        $arPagePropertyList = [];
+        $arPropertyList = PageHelper::instance()->getUrlParamList($sRedirectPage, 'UserPage');
+        if (!empty($arPropertyList)) {
+            $arPagePropertyList[array_shift($arPropertyList)] = $this->obUser->id;
+        }
+
+        return $arPagePropertyList;
     }
 }
