@@ -21,3 +21,5 @@
 1.5.0:
     - 'Add integration with laravel/socialite package. Add SocialiteLogin component, SocialiteToken model. Added onSocialiteLogin() method to Login component. Added force_login, redirect_on, redirect_page properties to ActivationPage component. Added login_page property to UserPage component. Add possibility to extend query from user model while finding user by credentials.'
     - table_create_socialite_tokens.php
+1.6.0:
+    - 'Added french language. Thanks for contribution Félix Desjardins.'
