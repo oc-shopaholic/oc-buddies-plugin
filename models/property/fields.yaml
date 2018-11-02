@@ -29,7 +29,7 @@ fields:
         trigger:
             action: show
             field: type
-            condition: 'value[select] || value[checkbox]'
+            condition: 'value[select] || value[checkbox] || value[radio] || value[balloon_selector] || value[tag_list]'
         form:
             fields:
                 value:
