@@ -25,3 +25,5 @@
     - 'Added french language. Thanks for contribution Félix Desjardins.'
 1.7.0:
     - 'Added supported types of user properties: number, rich editor, single checkbox, switch, balloon selector, tag list, radio.'
+1.7.1:
+    - 'Added SoftDelete trait to User model.'
