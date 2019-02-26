@@ -1,5 +1,7 @@
 <?php namespace Lovata\Buddies\Models;
 
+use October\Rain\Database\Traits\SoftDelete;
+
 use Kharanenka\Scope\NameField;
 use Kharanenka\Helper\DataFileModel;
 use October\Rain\Auth\Models\User as UserModel;
@@ -61,6 +63,7 @@ use Lovata\Toolbox\Traits\Models\SetPropertyAttributeTrait;
  */
 class User extends UserModel
 {
+    use SoftDelete;
     use DataFileModel;
     use NameField;
     use TraitCached;
