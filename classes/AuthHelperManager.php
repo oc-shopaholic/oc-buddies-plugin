@@ -8,6 +8,7 @@ use Lovata\Buddies\Models\User;
 use Backend\Models\UserGroup;
 use Lovata\Buddies\Models\Throttle;
 use October\Rain\Auth\Manager as AuthManager;
+use Illuminate\Contracts\Auth\Authenticatable;
 
 /**
  * Class AuthHelperManager
@@ -84,7 +85,7 @@ class AuthHelperManager extends AuthManager
      * @param User $obUser
      * @param bool $bRemember
      */
-    public function login($obUser, $bRemember = false)
+    public function login(Authenticatable $obUser, $bRemember = false)
     {
         $this->user = $obUser;
 
