@@ -75,4 +75,4 @@ jobs:
         skip_cleanup: true
         on:
           tags: true
-          repo: lovata/oc-buddies-plugin
+          repo: oc-shopaholic/oc-buddies-plugin
