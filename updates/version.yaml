@@ -27,3 +27,5 @@
     - 'Added supported types of user properties: number, rich editor, single checkbox, switch, balloon selector, tag list, radio.'
 1.7.1:
     - 'Added SoftDelete trait to User model.'
+1.7.2:
+    - 'Fixed login method, after updating OctoberCMS v1.0.455'
