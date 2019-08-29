@@ -1,6 +1,7 @@
 <?php namespace Lovata\Buddies\Classes;
 
 use Lang;
+use Event;
 use Cookie;
 use Session;
 use Kharanenka\Helper\Result;
@@ -17,6 +18,9 @@ use Illuminate\Contracts\Auth\Authenticatable;
  */
 class AuthHelperManager extends AuthManager
 {
+    const EVENT_LOGIN = 'lovata.buddies.login';
+    const EVENT_LOGOUT = 'lovata.buddies.logout';
+
     protected $sessionKey = 'buddies_user_auth';
     protected $userModel = User::class;
     protected $groupModel = UserGroup::class;
@@ -102,6 +106,8 @@ class AuthHelperManager extends AuthManager
 
         //Fire the 'afterLogin' event
         $this->user->afterLogin();
+
+        Event::fire(self::EVENT_LOGIN, [$this->user]);
     }
 
 
@@ -110,9 +116,15 @@ class AuthHelperManager extends AuthManager
      */
     public function logout()
     {
+        //Save current user
+        $user = $this->user;
+
         $this->requireActivation = false;
         parent::logout();
         $this->requireActivation = true;
+
+        if ($user)
+            Event::fire(self::EVENT_LOGOUT, [$user]);
     }
 
     /**
