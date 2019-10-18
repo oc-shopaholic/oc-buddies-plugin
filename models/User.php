@@ -1,5 +1,6 @@
 <?php namespace Lovata\Buddies\Models;
 
+use Event;
 use October\Rain\Database\Traits\SoftDelete;
 
 use Kharanenka\Scope\NameField;
@@ -12,40 +13,40 @@ use Lovata\Toolbox\Traits\Models\SetPropertyAttributeTrait;
 /**
  * Class User
  * @package Lovata\Buddies\Models
- * @author Andrey Kharanenka, a.khoronenko@lovata.com, LOVATA Group
+ * @author  Andrey Kharanenka, a.khoronenko@lovata.com, LOVATA Group
  *
  * @mixin \October\Rain\Database\Builder
  * @mixin \Eloquent
  *
- * @property int $id
- * @property bool $is_activated
- * @property string $email
- * @property string $password
- * @property bool $password_change
- * @property string $password_confirmation
- * @property string $name
- * @property string $last_name
- * @property string $middle_name
- * @property string $phone
- * @property string $phone_short
- * @property array $phone_list
- * @property string $activation_code
- * @property string $persist_code
- * @property string $reset_password_code
- * @property string $permissions
- * @property \October\Rain\Argon\Argon $activated_at
- * @property \October\Rain\Argon\Argon $last_login
- * @property bool $is_superuser
- * @property array $property
- * @property \October\Rain\Argon\Argon $created_at
- * @property \October\Rain\Argon\Argon $updated_at
- * @property \October\Rain\Argon\Argon $deleted_at
+ * @property int                                                                                                                       $id
+ * @property bool                                                                                                                      $is_activated
+ * @property string                                                                                                                    $email
+ * @property string                                                                                                                    $password
+ * @property bool                                                                                                                      $password_change
+ * @property string                                                                                                                    $password_confirmation
+ * @property string                                                                                                                    $name
+ * @property string                                                                                                                    $last_name
+ * @property string                                                                                                                    $middle_name
+ * @property string                                                                                                                    $phone
+ * @property string                                                                                                                    $phone_short
+ * @property array                                                                                                                     $phone_list
+ * @property string                                                                                                                    $activation_code
+ * @property string                                                                                                                    $persist_code
+ * @property string                                                                                                                    $reset_password_code
+ * @property string                                                                                                                    $permissions
+ * @property \October\Rain\Argon\Argon                                                                                                 $activated_at
+ * @property \October\Rain\Argon\Argon                                                                                                 $last_login
+ * @property bool                                                                                                                      $is_superuser
+ * @property array                                                                                                                     $property
+ * @property \October\Rain\Argon\Argon                                                                                                 $created_at
+ * @property \October\Rain\Argon\Argon                                                                                                 $updated_at
+ * @property \October\Rain\Argon\Argon                                                                                                 $deleted_at
  *
- * @property \System\Models\File $avatar
+ * @property \System\Models\File                                                                                                       $avatar
  *
- * @property  \October\Rain\Database\Collection|Group[] $groups
+ * @property  \October\Rain\Database\Collection|Group[]                                                                                $groups
  *
- * @property  \October\Rain\Database\Collection|SocialiteToken[] $socialite_token
+ * @property  \October\Rain\Database\Collection|SocialiteToken[]                                                                       $socialite_token
  * @method static \October\Rain\Database\Relations\HasMany|SocialiteToken socialite_token()
  *
  * @method static $this active()
@@ -54,10 +55,10 @@ use Lovata\Toolbox\Traits\Models\SetPropertyAttributeTrait;
  * @method static $this getByEmail(string $sEmail)
  *
  * Orders for Shopaholic plugin
- * @property \Lovata\OrdersShopaholic\Models\Order[]|\October\Rain\Database\Collection $order
+ * @property \Lovata\OrdersShopaholic\Models\Order[]|\October\Rain\Database\Collection                                                 $order
  * @method static \October\Rain\Database\Relations\HasMany|\Lovata\OrdersShopaholic\Models\Order order()
- * @property \Lovata\OrdersShopaholic\Classes\Collection\OrderCollection|\Lovata\OrdersShopaholic\Classes\Item\OrderItem[] $order_list
- * @property \Lovata\OrdersShopaholic\Models\UserAddress[]|\October\Rain\Database\Collection $address
+ * @property \Lovata\OrdersShopaholic\Classes\Collection\OrderCollection|\Lovata\OrdersShopaholic\Classes\Item\OrderItem[]             $order_list
+ * @property \Lovata\OrdersShopaholic\Models\UserAddress[]|\October\Rain\Database\Collection                                           $address
  * @method static \October\Rain\Database\Relations\HasMany|\Lovata\OrdersShopaholic\Models\UserAddress address()
  * @property \Lovata\OrdersShopaholic\Classes\Collection\UserAddressCollection|\Lovata\OrdersShopaholic\Classes\Item\UserAddressItem[] $address_list
  */
@@ -68,6 +69,10 @@ class User extends UserModel
     use NameField;
     use TraitCached;
     use SetPropertyAttributeTrait;
+
+    const EVENT_BEFORE_LOGIN = 'lovata.buddies.before.login';
+    const EVENT_AFTER_LOGIN = 'lovata.buddies.after.login';
+    const EVENT_LOGOUT = 'lovata.buddies.logout';
 
     public $table = 'lovata_buddies_users';
 
@@ -121,6 +126,24 @@ class User extends UserModel
     public $hasMany = [
         'socialite_token' => [SocialiteToken::class],
     ];
+
+    /**
+     * Fire before event event
+     */
+    public function beforeLogin()
+    {
+        Event::fire(self::EVENT_BEFORE_LOGIN, [$this]);
+    }
+
+    /**
+     * Fire after event login
+     */
+    public function afterLogin()
+    {
+        parent::afterLogin();
+
+        Event::fire(self::EVENT_AFTER_LOGIN, [$this]);
+    }
 
     /**
      * Before delete model method
