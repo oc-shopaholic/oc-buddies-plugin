@@ -1,6 +1,7 @@
 <?php namespace Lovata\Buddies\Classes;
 
 use Lang;
+use Event;
 use Cookie;
 use Session;
 use Kharanenka\Helper\Result;
@@ -110,9 +111,15 @@ class AuthHelperManager extends AuthManager
      */
     public function logout()
     {
+        $obUser = $this->user;
+
         $this->requireActivation = false;
         parent::logout();
         $this->requireActivation = true;
+
+        if (!empty($obUser)) {
+            Event::fire(User::EVENT_LOGOUT, [$obUser]);
+        }
     }
 
     /**
