@@ -128,7 +128,7 @@ class User extends UserModel
     ];
 
     /**
-     * Fire before event event
+     * Fire before login event
      */
     public function beforeLogin()
     {
@@ -136,7 +136,7 @@ class User extends UserModel
     }
 
     /**
-     * Fire after event login
+     * Fire after login event
      */
     public function afterLogin()
     {
