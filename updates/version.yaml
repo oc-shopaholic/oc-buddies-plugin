@@ -29,3 +29,5 @@
     - 'Added SoftDelete trait to User model.'
 1.7.2:
     - 'Fixed login method, after updating OctoberCMS v1.0.455'
+1.8.0:
+    - 'Added lovata.buddies.before.login, lovata.buddies.after.login, lovata.buddies.logout events'
