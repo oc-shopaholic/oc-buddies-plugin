@@ -111,12 +111,14 @@ class AuthHelperManager extends AuthManager
      */
     public function logout()
     {
+        $obUser = $this->user;
+
         $this->requireActivation = false;
         parent::logout();
         $this->requireActivation = true;
 
-        if (!empty($this->user)) {
-            Event::fire(User::EVENT_LOGOUT, [$this->user]);
+        if (!empty($obUser)) {
+            Event::fire(User::EVENT_LOGOUT, [$obUser]);
         }
     }
 
