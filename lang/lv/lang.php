@@ -1,7 +1,7 @@
 <?php return [
     'plugin' => [
         'name'                  => 'Lietotāji',
-        'description'           => 'Users login/registration',
+        'description'           => 'Lietotāju autorizācija/reģistrācija',
     ],
     'field' => [
         'name'                           => 'Vārds',
@@ -15,18 +15,18 @@
     'menu' => [
         'main'     => 'Lietotāji',
         'user'     => 'Lietotāji',
-        'property' => 'Addition properties',
+        'property' => 'Papildus rekvizīti',
     ],
     'user' => [
         'name'          => 'lietotājs',
         'list_title'    => 'Lietotāju saraksts',
     ],
     'property' => [
-        'name'       => 'property',
-        'list_title' => 'Property list',
+        'name'       => 'rekvizīts',
+        'list_title' => 'Rekvizītu saraksts',
     ],
     'tab' => [
-        'data'          => 'Data',
+        'data'          => 'Dati',
         'permissions'   => 'Labot lietotājus',
     ],
     'component' => [
@@ -35,46 +35,46 @@
 
         'login'                         => 'Autorizācija',
         'login_desc'                    => '',
-        'socialite_login'               => 'Socialite login',
+        'socialite_login'               => 'Autorizācija ar kādu no socijālajiem tīkiem',
         'socialite_login_desc'          => '',
-        'logout'                        => 'Logout',
+        'logout'                        => 'Iziet',
         'logout_desc'                   => '',
 
-        'user_page'                     => 'User page',
+        'user_page'                     => 'Lietotāja lapa',
         'user_page_desc'                => '',
-        'user_data'                     => 'User data',
+        'user_data'                     => 'Lietotāja dati',
         'user_data_desc'                => '',
 
-        'activation_page'               => 'User activation page',
+        'activation_page'               => 'Lietotāju aktivizācijas lapa',
         'activation_page_desc'          => '',
 
-        'reset_password'                => 'Reset password',
+        'reset_password'                => 'Atiestatīt paroli',
         'reset_password_desc'           => '',
 
-        'change_password'               => 'Change password',
+        'change_password'               => 'Mainīt paroli',
         'change_password_desc'          => '',
 
-        'restore_password'         => 'Restore password',
+        'restore_password'         => 'Atjaunot paroli',
         'restore_password_desc'    => '',
 
 
         'property_force_login'                  => 'User will be authorized after registration',
         'property_activation'                   => 'Lietotāju automātiska aktivācija',
-        'property_activation_on'                => 'Ieslēgta',
-        'property_activation_off'               => 'OFF',
-        'property_activation_mail'              => 'Send activation email',
+        'property_activation_on'                => 'Ieslēgta/Jā',
+        'property_activation_off'               => 'Izslēgta/Nē',
+        'property_activation_mail'              => 'Nosūtīt lietotajam konta aktivisācijas e-pastu',
         'property_check_old_password'           => 'Check old password',
         'property_socialite_code'               => 'Socialite code',
-        'property_login_page'                   => 'Redirect to login page if user is not authorized',
+        'property_login_page'                   => 'Pāradresēt lietotāju uz autorizācijas lapu, ja viņš nav autorizējies',
     ],
     'message' => [
-        'e_user_create'                 => 'Error creating user',
-        'e_user_banned'                 => 'User  ":user" is banned',
-        'e_user_suspended'              => 'User ":user" is temporarily blocked.',
-        'e_login_not_correct'           => 'You entered incorrect email or password.',
-        'e_user_not_active'             => 'User is not activated.',
-        'e_auth_fail'                   => 'You are already authorized.',
-        'e_user_not_found'              => 'User ":user" not found',
+        'e_user_create'                 => 'Notikusi kļūda izveidojot lietotāju',
+        'e_user_banned'                 => 'Lietotājam ": user" pieeja ir liegta',
+        'e_user_suspended'              => 'Lietotājs ":user" ir īslaicīgi bloķēts.',
+        'e_login_not_correct'           => 'Jūs ievadījāt nepareizu e-pastu vai paroli.',
+        'e_user_not_active'             => 'Jūsu lietotājs nav aktivizēts.',
+        'e_auth_fail'                   => 'Jūs jau esat reģistrējies.',
+        'e_user_not_found'              => 'Lietotājs ":user" netika atrasts',
         'e_check_old_password'          => 'Old password entered incorrectly.',
         'email_is_busy'                 => 'Ar e-patu :email kāds jau ir reģistrējies, mēģiniet autorizēties',
         'email_is_available'            => 'E-pasts :email nav pieejams',
@@ -85,11 +85,11 @@
         'restore_mail_send_success'     => 'Sent email for password recovery.',
     ],
     'mail' => [
-        'restore'      => 'Restore password',
-        'registration' => 'Registration',
+        'restore'      => 'Paroles atiestatīšana',
+        'registration' => 'Reģistrācija',
     ],
     'permission' => [
-        'user'     => 'Manage users',
-        'property' => 'Manage addition properties',
+        'user'     => 'Labot lietotāju',
+        'property' => 'Pārvaldīt papildus rekvizītus',
     ],
 ];
