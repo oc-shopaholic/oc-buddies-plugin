@@ -1,25 +1,25 @@
 <?php return [
     'plugin' => [
-        'name'                  => 'Buddies',
+        'name'                  => 'Lietotāji',
         'description'           => 'Users login/registration',
     ],
     'field' => [
-        'name'                           => 'Name',
-        'last_name'                      => 'Last name',
+        'name'                           => 'Vārds',
+        'last_name'                      => 'Uzvārds',
         'middle_name'                    => 'Middle name',
-        'password_confirm'               => 'Confirm password',
-        'password_change'                => 'Change password',
+        'password_confirm'               => 'Parole vēlreiz',
+        'password_change'                => 'Mainīt paroli',
         'registration_mail_template'     => 'Registration mail template',
         'restore_password_mail_template' => 'Restore password mail template',
     ],
     'menu' => [
-        'main'     => 'Users',
-        'user'     => 'Users',
+        'main'     => 'Lietotāji',
+        'user'     => 'Lietotāji',
         'property' => 'Addition properties',
     ],
     'user' => [
-        'name'          => 'user',
-        'list_title'    => 'User list',
+        'name'          => 'lietotājs',
+        'list_title'    => 'Lietotāju saraksts',
     ],
     'property' => [
         'name'       => 'property',
@@ -27,13 +27,13 @@
     ],
     'tab' => [
         'data'          => 'Data',
-        'permissions'   => 'Manage users',
+        'permissions'   => 'Labot lietotājus',
     ],
     'component' => [
-        'registration'                  => 'Registration',
+        'registration'                  => 'Reģistrācija',
         'registration_desc'             => '',
 
-        'login'                         => 'Login',
+        'login'                         => 'Autorizācija',
         'login_desc'                    => '',
         'socialite_login'               => 'Socialite login',
         'socialite_login_desc'          => '',
@@ -59,8 +59,8 @@
 
 
         'property_force_login'                  => 'User will be authorized after registration',
-        'property_activation'                   => 'User activation',
-        'property_activation_on'                => 'ON',
+        'property_activation'                   => 'Lietotāju automātiska aktivācija',
+        'property_activation_on'                => 'Ieslēgta',
         'property_activation_off'               => 'OFF',
         'property_activation_mail'              => 'Send activation email',
         'property_check_old_password'           => 'Check old password',
@@ -76,12 +76,12 @@
         'e_auth_fail'                   => 'You are already authorized.',
         'e_user_not_found'              => 'User ":user" not found',
         'e_check_old_password'          => 'Old password entered incorrectly.',
-        'email_is_busy'                 => 'Email :email is busy',
-        'email_is_available'            => 'Email :email is available',
-        'registration_success'          => 'You have successfully registered',
-        'user_update_success'           => 'Your data was successfully saved',
-        'password_change_success'       => 'Password was successfully changed.',
-        'login_success'                 => 'You have been successfully authorized.',
+        'email_is_busy'                 => 'Ar e-patu :email kāds jau ir reģistrējies, mēģiniet autorizēties',
+        'email_is_available'            => 'E-pasts :email nav pieejams',
+        'registration_success'          => 'Reģistrācija pabeigta veiksmīgi',
+        'user_update_success'           => 'Sniegtā informāciaj tika veiksmīgi saglabāta',
+        'password_change_success'       => 'Parole tika veiksmīgi nomainīta.',
+        'login_success'                 => 'Autorizācija noteika veiksmīgi.',
         'restore_mail_send_success'     => 'Sent email for password recovery.',
     ],
     'mail' => [
