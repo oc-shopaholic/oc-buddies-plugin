@@ -98,7 +98,7 @@ class AuthHelperManager extends AuthManager
         Session::put($this->sessionKey, $toPersist);
 
         if ($bRemember) {
-            Cookie::queue(Cookie::forever($this->sessionKey, $toPersist));
+            Cookie::queue(Cookie::forever($this->sessionKey, json_encode($toPersist)));
         }
 
         //Fire the 'afterLogin' event
