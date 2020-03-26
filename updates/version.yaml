@@ -31,3 +31,5 @@
     - 'Fixed login method, after updating OctoberCMS v1.0.455'
 1.8.0:
     - 'Added lovata.buddies.before.login, lovata.buddies.after.login, lovata.buddies.logout events'
+1.8.1:
+    - 'Added avatar field to fillable array in User model.'
