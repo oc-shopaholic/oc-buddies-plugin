@@ -80,6 +80,7 @@ class User extends UserModel
         'email'                 => 'required|email|unique:lovata_buddies_users|max:255',
         'password'              => 'required:create|max:255|confirmed',
         'password_confirmation' => 'required_with:password|max:255',
+        'avatar'                => 'image|nullable',
     ];
     public $attributeNames = [
         'email'    => 'lovata.toolbox::lang.field.email',
@@ -97,6 +98,7 @@ class User extends UserModel
         'middle_name',
         'phone',
         'phone_list',
+        'avatar',
         'property',
     ];
 
