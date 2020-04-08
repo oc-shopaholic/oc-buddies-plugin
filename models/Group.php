@@ -35,7 +35,7 @@ class Group extends GroupBase
      */
     public $rules = [
         'name' => 'required|between:3,64',
-        'code' => 'required|regex:/^[a-zA-Z0-9_\-]+$/|unique:user_groups',
+        'code' => 'required|regex:/^[a-zA-Z0-9_\-]+$/|unique:lovata_buddies_groups',
     ];
 
     public $attributeNames = [
