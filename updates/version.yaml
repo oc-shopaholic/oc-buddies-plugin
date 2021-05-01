@@ -33,3 +33,5 @@
     - 'Added lovata.buddies.before.login, lovata.buddies.after.login, lovata.buddies.logout events'
 1.8.1:
     - 'Added avatar field to fillable array in User model.'
+1.9.0:
+    - 'Added composer.json to plugin'

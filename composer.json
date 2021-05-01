@@ -1,9 +1,8 @@
 {
-    "name": "lovata/oc-buddies-plugin",
+    "name": "lovata/buddies-plugin",
     "type": "october-plugin",
-    "description": "Users login/registration",
-    "license": "GPL-3.0-only",
+    "description": "October CMS user system",
     "require": {
-        "lovata/oc-toolbox-plugin": "~1.16"
+        "composer/installers": "~1.0"
     }
 }
