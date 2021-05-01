@@ -77,7 +77,7 @@
         'e_check_old_password'      => 'Старый пароль введен не верно',
         'email_is_busy'             => 'Email :email уже занят',
         'email_is_available'        => 'Email :email доступен',
-        'registration_success'      => 'Вы успешно зарегестировались',
+        'registration_success'      => 'Вы успешно зарегистировались',
         'password_change_success'   => 'Пароль успешно изменен',
         'login_success'             => 'Вы успешно авторизовались',
         'restore_mail_send_success' => 'Письмо для восстановления пароля отправлено',
