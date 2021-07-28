@@ -35,3 +35,5 @@
     - 'Added avatar field to fillable array in User model.'
 1.9.0:
     - 'Added composer.json to plugin'
+1.9.1:
+    - 'Updated composer.json file'
