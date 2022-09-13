@@ -61,7 +61,7 @@
         'property_activation'         => 'Активация пользователя',
         'property_activation_on'      => 'Включена',
         'property_activation_off'     => 'Выключена',
-        'property_activation_mail'    => 'Отправить письмо подтвеждения email адреса',
+        'property_activation_mail'    => 'Отправить письмо подтверждения email адреса',
         'property_check_old_password' => 'Проверять действующий пароль на совпадение',
         'property_socialite_code'     => 'Socialite code',
         'property_login_page'         => 'Перенаправление пользователя на страницу логина, если он не авторизован',
@@ -77,7 +77,7 @@
         'e_check_old_password'      => 'Старый пароль введен не верно',
         'email_is_busy'             => 'Email :email уже занят',
         'email_is_available'        => 'Email :email доступен',
-        'registration_success'      => 'Вы успешно зарегистировались',
+        'registration_success'      => 'Вы успешно зарегистрировались',
         'password_change_success'   => 'Пароль успешно изменен',
         'login_success'             => 'Вы успешно авторизовались',
         'restore_mail_send_success' => 'Письмо для восстановления пароля отправлено',
@@ -89,6 +89,6 @@
     ],
     'permission' => [
         'user'     => 'Управление пользователями',
-        'property' => 'Управление свойствами полозователей',
+        'property' => 'Управление свойствами пользователей',
     ],
 ];
