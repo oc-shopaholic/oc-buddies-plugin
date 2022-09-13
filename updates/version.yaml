@@ -37,3 +37,5 @@
     - 'Added composer.json to plugin'
 1.9.1:
     - 'Updated composer.json file'
+1.10.0:
+    - 'Added new lang files, fixed lang files. Thanks for contribution Vadimlj.'
