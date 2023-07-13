@@ -40,4 +40,4 @@
 1.10.0:
     - 'Added new lang files, fixed lang files. Thanks for contribution Vadimlj.'
 1.10.1:
-    - 'Changed composer.json file changed the ability to use lovata/toolbox plugin: ^1.0 => lovata/toolbox plugin: ^2.0'
+    - 'Updated composer.json file.'
