@@ -72,6 +72,7 @@ class User extends UserModel
 
     const EVENT_BEFORE_LOGIN = 'lovata.buddies.before.login';
     const EVENT_AFTER_LOGIN = 'lovata.buddies.after.login';
+    const EVENT_AFTER_REGISTRATION = 'lovata.buddies.after.registration';
     const EVENT_LOGOUT = 'lovata.buddies.logout';
 
     public $table = 'lovata_buddies_users';
