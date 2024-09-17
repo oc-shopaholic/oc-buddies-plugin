@@ -55,9 +55,13 @@ class Plugin extends PluginBase
     public function register()
     {
         $obAlias = AliasLoader::getInstance();
-        $obAlias->alias('AuthHelper', 'Lovata\Buddies\Facades\AuthHelper');
+        $obAlias->alias('Auth', 'Lovata\Buddies\Facades\AuthHelper');
 
         App::singleton('auth.helper', function () {
+            return AuthHelperManager::instance();
+        });
+        
+        App::singleton('user.auth', function () {
             return AuthHelperManager::instance();
         });
     }

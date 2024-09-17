@@ -27,4 +27,13 @@ class Users extends Controller
         parent::__construct();
         BackendMenu::setContext('Lovata.Buddies', 'main-menu-buddies', 'side-menu-buddies-user');
     }
+    
+     public function update_onImpersonateUser($recordId)
+    {
+        $model = $this->formFindModelObject($recordId);
+
+        Auth::impersonate($model);
+
+        Flash::success('Вы залогинились');
+    }
 }
