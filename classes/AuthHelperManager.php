@@ -269,11 +269,13 @@ class AuthHelperManager extends AuthManager
         // Prevents revalidation of the password field
         // on subsequent saves to this model object
         $obUser->password = null;
-        
+
         if ($bAutoLogin) {
             $this->user = $obUser;
         }
-        
+
+        Event::fire(User::EVENT_AFTER_REGISTRATION, [$obUser]);
+
         return $obUser;
     }
 
