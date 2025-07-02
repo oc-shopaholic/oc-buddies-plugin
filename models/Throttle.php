@@ -13,17 +13,17 @@ use October\Rain\Auth\Models\Throttle as ThrottleBase;
  * @mixin \October\Rain\Database\Builder
  * @mixin \Eloquent
  *
- * @property int                       $id
- * @property int                       $user_id
- * @property string                    $ip_address
- * @property bool                      $attempts
- * @property \October\Rain\Argon\Argon $last_attempt_at
- * @property bool                      $is_suspended
- * @property \October\Rain\Argon\Argon $suspended_at
- * @property bool                      $is_banned
- * @property \October\Rain\Argon\Argon $banned_at
+ * @property int            $id
+ * @property int            $user_id
+ * @property string         $ip_address
+ * @property bool           $attempts
+ * @property \Carbon\Carbon $last_attempt_at
+ * @property bool           $is_suspended
+ * @property \Carbon\Carbon $suspended_at
+ * @property bool           $is_banned
+ * @property \Carbon\Carbon $banned_at
  *
- * @property User                      $user
+ * @property User           $user
  *
  */
 class Throttle extends ThrottleBase
@@ -32,7 +32,7 @@ class Throttle extends ThrottleBase
 
     public $table = 'lovata_buddies_throttle';
     public $belongsTo = [
-        'user' => [User::class]
+        'user' => [User::class],
     ];
 
     /**

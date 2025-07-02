@@ -13,12 +13,12 @@ use October\Rain\Database\Traits\Validation;
  * @mixin \October\Rain\Database\Builder
  * @mixin \Eloquent
  *
- * @property int $id
- * @property string $name
- * @property string $code
- * @property string $description
- * @property \October\Rain\Argon\Argon $created_at
- * @property \October\Rain\Argon\Argon $updated_at
+ * @property int                                      $id
+ * @property string                                   $name
+ * @property string                                   $code
+ * @property string                                   $description
+ * @property \Carbon\Carbon                           $created_at
+ * @property \Carbon\Carbon                           $updated_at
  *
  * @property \October\Rain\Database\Collection|User[] $users
  */

@@ -15,14 +15,14 @@ use Kharanenka\Scope\UserBelongsTo;
  * @mixin \October\Rain\Database\Builder
  * @mixin \Eloquent
  *
- * @property int                       $id
- * @property int                       $user_id
- * @property string                    $code
- * @property string                    $external_id
- * @property \October\Rain\Argon\Argon $created_at
- * @property \October\Rain\Argon\Argon $updated_at
+ * @property int            $id
+ * @property int            $user_id
+ * @property string         $code
+ * @property string         $external_id
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
  *
- * @property User                      $user
+ * @property User           $user
  * @method static User|\October\Rain\Database\Relations\BelongsTo user()
  */
 class SocialiteToken extends Model

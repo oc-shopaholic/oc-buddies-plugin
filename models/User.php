@@ -34,13 +34,13 @@ use Lovata\Toolbox\Traits\Models\SetPropertyAttributeTrait;
  * @property string                                                                                                                    $persist_code
  * @property string                                                                                                                    $reset_password_code
  * @property string                                                                                                                    $permissions
- * @property \October\Rain\Argon\Argon                                                                                                 $activated_at
- * @property \October\Rain\Argon\Argon                                                                                                 $last_login
+ * @property \Carbon\Carbon                                                                                                            $activated_at
+ * @property \Carbon\Carbon                                                                                                            $last_login
  * @property bool                                                                                                                      $is_superuser
  * @property array                                                                                                                     $property
- * @property \October\Rain\Argon\Argon                                                                                                 $created_at
- * @property \October\Rain\Argon\Argon                                                                                                 $updated_at
- * @property \October\Rain\Argon\Argon                                                                                                 $deleted_at
+ * @property \Carbon\Carbon                                                                                                            $created_at
+ * @property \Carbon\Carbon                                                                                                            $updated_at
+ * @property \Carbon\Carbon                                                                                                            $deleted_at
  *
  * @property \System\Models\File                                                                                                       $avatar
  *
